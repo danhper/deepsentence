@@ -27,7 +27,7 @@ def article_body(article_soup):
 
 def extract_sources(article_soup):
     source_soups = article_body(article_soup).find_all(class_=re.compile('CiteTxt'))
-    return set(extract_source(source_soup for source_soup in source_soups))
+    return [extract_source(source_soup) for source_soup in source_soups]
 
 
 def extract_source(source_soup):
