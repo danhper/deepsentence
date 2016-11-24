@@ -42,6 +42,7 @@ class Article(Base):
     url = Column(String(255))
     content = Column(Text())
     posted_at = Column(DateTime())
+    sources_count = Column(Integer())
 
     service_id = Column(Integer, ForeignKey('services.id'))
     service = relationship('Service', back_populates='articles')

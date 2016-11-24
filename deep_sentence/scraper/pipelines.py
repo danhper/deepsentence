@@ -60,16 +60,27 @@ class PostgresPipeline(object):
         if not category:
             raise DropItem('could not find category {0}'.format(category_name))
 
-        sources = [models.Source(**source) for source in article_item.pop('sources')]
+        sources = self.generate_sources(article_item.pop('sources'), session)
 
         article = models.Article(**article_item)
         article.service = service
         article.category = category
         for source in sources:
-            if source.url:
-                article.sources.append(source)
+            article.sources.append(source)
+
+        article.sources_count = len(article.sources)
 
         session.add(article)
+
+    def generate_sources(self, source_items, session):
+        sources = []
+        for source_item in source_items:
+            source = session.query(models.Source).filter_by(url=source_item['url']).first()
+            if source:
+                sources.append(source)
+            elif source_item['url']:
+                sources.append(models.Source(**source_item))
+        return sources
 
     def find_service(self, service_name, session):
         if service_name in self.cached_services:
