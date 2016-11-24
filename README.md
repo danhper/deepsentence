@@ -1,6 +1,21 @@
-# 先端人工知能論
+# Deep Sentence
+
+Deep Sentence is a deep learning based engine to summarize texts from multiple
+sources into a single short summary.
+
+## Table of contents
+
+* [Setup](#setup)
+* [Scraper](#scraper)
+* [Development](#development)
+* [DB Setup](#db-setup)
 
 ## Setup
+
+Requirements:
+
+* Python 3.5
+
 
 Setup a new virtualenv environment if you want, then simply run
 
@@ -8,8 +23,26 @@ Setup a new virtualenv environment if you want, then simply run
 make
 ```
 
+## Scraper
 
-## Adding dependencies
+### Usage
+
+To start the scraper, run
+
+```
+scrapy crawl line_news
+```
+
+if you want a shell to play around with the responses, run
+
+```
+scrapy shell ARTICLE_URL --spider=line_news
+```
+
+
+## Development
+
+### Adding dependencies
 
 Run
 
@@ -18,9 +51,9 @@ make write_dependencies
 ```
 
 to regenerate `requirements.txt`.
-Please be sure to run this from a clean environment.
+Please be sure to run this from a clean environment, and only add *needed* dependencies.
 
-## DB usage
+## DB setup
 
 Add the following to your `~/.ssh/config` file
 
