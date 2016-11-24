@@ -7,6 +7,8 @@ USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/
 
 ROBOTSTXT_OBEY = True
 
+LOG_LEVEL = 'INFO'
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
