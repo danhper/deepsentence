@@ -66,7 +66,8 @@ class PostgresPipeline(object):
         article.service = service
         article.category = category
         for source in sources:
-            article.sources.append(source)
+            if source.url:
+                article.sources.append(source)
 
         session.add(article)
 
