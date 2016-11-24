@@ -1,0 +1,8 @@
+[{
+  "model": "Service",
+  "pk": "id",
+  "attrs": {
+    "id": 1,
+    "name": "line_news"
+  }
+}]

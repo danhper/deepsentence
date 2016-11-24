@@ -17,3 +17,8 @@ class CategoryItem(scrapy.Item):
     label = scrapy.Field()
     remote_id = scrapy.Field()
     service_name = scrapy.Field()
+
+
+class SourceItem(scrapy.Item):
+    title = scrapy.Field()
+    url = scrapy.Field()

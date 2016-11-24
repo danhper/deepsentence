@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+import os
+import json
+
+from deep_sentence import db, models, settings
+
+
+def populate():
+    make_session = db.create_session_maker()
+    session = make_session()
+    fixture_files = sorted(os.listdir(settings.FIXTURES_PATH))
+
+    stats = {}
+
+    for fixture_file in fixture_files:
+        with open(os.path.join(settings.FIXTURES_PATH, fixture_file), 'r') as f:
+            fixtures = json.loads(f.read())
+
+        for fixture in fixtures:
+            model_name = fixture['model']
+            Model = getattr(models, model_name)
+            model = Model(**fixture['attrs'])
+            if not session.query(Model).get(model.id):
+                session.add(model)
+                stats[model_name] = stats.get(model_name, 0) + 1
+
+    for model, count in stats.items():
+        print('Added {0} models to {1}'.format(count, model))
+
+    session.commit()
+
+if __name__ == '__main__':
+    populate()

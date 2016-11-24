@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 from urllib.parse import urlparse, urlunparse
 
-from deep_sentence.scraper.items import ArticleItem, CategoryItem
+from deep_sentence.scraper.items import ArticleItem, CategoryItem, SourceItem
 
 
 SERVICE_NAME = 'line_news'
@@ -96,9 +96,9 @@ def extract_sources(response):
 
 def extract_source(selector):
     texts = selector.xpath('.//text()').extract()
-    text = ' '.join(strip_and_filter_texts(texts))
+    title = ' '.join(strip_and_filter_texts(texts))
     url = selector.xpath(SELECTORS['source_url']).extract_first()
-    return {'url': url, 'text': text}
+    return SourceItem(url=url, title=title)
 
 
 def path_to_url(response, path):

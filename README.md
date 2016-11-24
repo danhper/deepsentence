@@ -12,16 +12,22 @@ sources into a single short summary.
 
 ## Setup
 
-Requirements:
+### Requirements
 
 * Python 3.5
+* [psycopg2 requirements](http://initd.org/psycopg/docs/install.html)
 
+### Installing dependencies
 
 Setup a new virtualenv environment if you want, then simply run
 
 ```
 make
 ```
+
+### Configuration
+
+Copy `.env.example` to `.env`, and modify the variables to your needs.
 
 ## Scraper
 
@@ -39,7 +45,6 @@ if you want a shell to play around with the responses, run
 scrapy shell ARTICLE_URL --spider=line_news
 ```
 
-
 ## Development
 
 ### Adding dependencies
@@ -55,28 +60,14 @@ Please be sure to run this from a clean environment, and only add *needed* depen
 
 ## DB setup
 
-Add the following to your `~/.ssh/config` file
+You can access the database as follow
 
 ```
-Host orion.claudetech.com
-    User deep_sentence
-    Hostname orion.claudetech.com
-    Port 2211
-    ForwardAgent yes
-
-Host db.claudetech.com
-    User deep_sentence
-    ProxyCommand ssh -q orion.claudetech.com nc -q0 192.168.10.39 22
+psql -h public-db.claudetech.com -p 5433 -U deep_sentence
 ```
 
-Then, start a tunnel to db.claudetech.com:
+To be able to use it in from Python, set `DATABASE_URL` to the following value
 
 ```
-ssh -L 5433:localhost:5432 db.claudetech.com
-```
-
-You can then access the database as follow
-
-```
-psql -h localhost -p 5433 -U deep_sentence
+postgres://deep_sentence:PASSWORD@public-db.claudetech.com:5433/deep_sentence
 ```
