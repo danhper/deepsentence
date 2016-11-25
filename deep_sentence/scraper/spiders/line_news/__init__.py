@@ -1,5 +1,9 @@
-from urllib.parse import urlencode
-from datetime import datetime
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
+import time
 
 import scrapy
 
@@ -23,7 +27,7 @@ class LineNewsSpider(scrapy.Spider):
             yield self.make_category_request(category)
 
     def make_category_request(self, category):
-        timestamp = int(datetime.timestamp(datetime.now()) * 1000)
+        timestamp = int(time.time() * 1000)
         params = urlencode({'category_id': category['remote_id'], '_': timestamp})
         return scrapy.Request(LineNewsSpider.api_base_url + '/issue/top?' + params,
                               headers=LineNewsSpider.api_headers,

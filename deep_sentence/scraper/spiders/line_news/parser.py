@@ -1,7 +1,10 @@
 import json
 import re
 from datetime import datetime
-from urllib.parse import urlparse, urlunparse
+try:
+    from urllib.parse import urlparse, urlunparse
+except ImportError:
+    from urlparse import urlparse, urlunparse
 
 from deep_sentence.scraper.items import ArticleItem, CategoryItem, SourceItem
 
@@ -64,7 +67,7 @@ def extract_category(selector):
 
 
 def strip_and_filter_texts(texts):
-    return filter(lambda x: x, map(str.strip, texts))
+    return filter(lambda x: x, [text.strip() for text in texts])
 
 
 def extract_article(response):
