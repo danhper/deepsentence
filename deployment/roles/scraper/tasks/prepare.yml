@@ -5,3 +5,6 @@
   with_items:
     - libpq-dev
     - supervisor
+
+- name: Install scrapyd-client
+  pip: name=scrapyd-client
