@@ -1,7 +1,10 @@
+import scrapy
 from scrapy.exceptions import DropItem
+from twisted.internet.defer import DeferredList
 
 from deep_sentence.scraper import items
 from deep_sentence import db, models
+from source_parsers import find_parser_for
 
 
 class PostgresPipeline(object):
@@ -11,16 +14,42 @@ class PostgresPipeline(object):
     def open_spider(self, _spider):
         self.make_session = db.create_session_maker()
 
-    def process_item(self, item, _spider):
+    def process_item(self, item, spider):
         if isinstance(item, items.CategoryItem):
-            self.process_category(item)
+            return self.process_category(item)
         elif isinstance(item, items.ArticleItem):
-            self.process_article(item)
+            return self.process_article(item, spider)
         return item
+
+    def parse_sources(self, results, (item, article_id)):
+        with db.session_scope(self.make_session) as session:
+            article = session.query(models.Article).get(article_id)
+            for (source, (success, response)) in zip(article.sources, results):
+                if not success:
+                    continue
+                source_content = self.parse_source(source, response)
+                if source_content:
+                    source = session.query(models.Source).get(source.id)
+                    source.content = source_content
+        return item
+
+    def parse_source(self, source, response):
+        url = source.media.base_url
+        parser = find_parser_for(url)
+        if parser:
+            return parser.extract_content(response)
+
+    def create_sources_deferred(self, sources, spider):
+        deferred_list = []
+        for source in sources:
+            req = scrapy.Request(url=source.url)
+            deferred = spider.crawler.engine.download(req, spider)
+            deferred_list.append(deferred)
+        return DeferredList(deferred_list)
 
     def process_category(self, category_item):
         with db.session_scope(self.make_session) as session:
-            self.create_category(category_item, session)
+            return self.create_category(category_item, session)
 
     def create_category(self, category_item, session):
         service_name = category_item.pop('service_name')
@@ -37,11 +66,16 @@ class PostgresPipeline(object):
         session.add(category)
         return category
 
-    def process_article(self, article_item):
+    def process_article(self, article_item, spider):
         with db.session_scope(self.make_session) as session:
             article = session.query(models.Article).filter_by(url=article_item['url']).first()
             if not article:
-                self.process_new_article(article_item.copy(), session)
+                article = self.process_new_article(article_item.copy(), session)
+                session.commit()
+
+            deferred = self.create_sources_deferred(article.sources, spider)
+            deferred.addBoth(self.parse_sources, (article_item, article.id))
+            return deferred
 
     def process_new_article(self, article_item, session):
         service_name = article_item.pop('service_name')
@@ -65,6 +99,7 @@ class PostgresPipeline(object):
         article.sources_count = len(article.sources)
 
         session.add(article)
+        return article
 
     def generate_sources(self, source_items, session):
         session.autoflush = False
@@ -72,6 +107,7 @@ class PostgresPipeline(object):
         for source_item in source_items:
             if source_item['url']:
                 source = models.Source(**source_item)
+                # FIXME: race condition here, it should only matter for the first records
                 media = self.find_or_create_media(source.url, session)
                 source.media = media
                 source.media.sources_count += 1
@@ -85,6 +121,7 @@ class PostgresPipeline(object):
         if media:
             return media
         media = models.Media(base_url=base_url, sources_count=0)
+        session.add(media)
         return media
 
     def find_service(self, service_name, session):

@@ -5,7 +5,7 @@ NEWSPIDER_MODULE = 'deep_sentence.scraper.spiders'
 
 USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25'
 
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 LOG_LEVEL = 'INFO'
 
