@@ -9,6 +9,7 @@ sources into a single short summary.
 * [Scraper](#scraper)
 * [Development](#development)
 * [DB Setup](#db-setup)
+* [Deployment](#deployment)
 
 ## Setup
 
@@ -71,3 +72,7 @@ To be able to use it in from Python, set `DATABASE_URL` to the following value
 ```
 postgres://deep_sentence:PASSWORD@public-db.claudetech.com:5433/deep_sentence
 ```
+
+## Deployment
+
+See (./deployment/README.md) for more information about how to setup a node.

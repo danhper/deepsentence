@@ -1,0 +1,33 @@
+---
+
+- name: Create scrapyd user
+  user: name={{ scrapyd_user }} comment="scrapyd user"
+
+- name: Install scrapyd
+  pip: name=scrapyd
+
+- name: Enable supervisor
+  service: name=supervisor enabled=yes state=started
+
+# remove next 2 tasks when https://github.com/ansible/ansible-modules-core/issues/3764 is fixed
+- name: Check for systemctl
+  changed_when: no
+  command: which systemctl
+  register: which_systemctl
+  ignore_errors: yes
+
+- name: Enable supervisor with systemd
+  command: systemctl enable supervisor
+  when: which_systemctl | succeeded
+  changed_when: no
+
+- name: Add scrapyd config
+  template: src=scrapyd.conf dest=/etc/supervisor/conf.d/scrapyd.conf
+  register: scrapyd_config
+
+- name: Restart supervisor
+  service: name=supervisor state=restarted
+  when: scrapyd_config | changed
+
+- name: Start scrapyd
+  supervisorctl: name=scrapyd state=started

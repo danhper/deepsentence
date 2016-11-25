@@ -1,0 +1,4 @@
+---
+
+username: deep_sentence
+user_home: "/home/{{ username }}"

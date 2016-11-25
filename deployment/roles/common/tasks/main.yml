@@ -1,0 +1,7 @@
+---
+  
+- include: set_locale.yml
+- include: configure_ntp.yml
+- include: create_user.yml
+- include: configure_ssh.yml
+- include: install_base_packages.yml
