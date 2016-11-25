@@ -7,8 +7,6 @@ from deep_sentence import db, models
 class PostgresPipeline(object):
     def __init__(self):
         self.make_session = None
-        self.cached_categories = {}
-        self.cached_services = {}
 
     def open_spider(self, _spider):
         self.make_session = db.create_session_maker()
@@ -21,12 +19,8 @@ class PostgresPipeline(object):
         return item
 
     def process_category(self, category_item):
-        if category_item['name'] in self.cached_categories:
-            return
-
         with db.session_scope(self.make_session) as session:
-            category = self.create_category(category_item, session)
-            self.cached_categories[category.name] = category
+            self.create_category(category_item, session)
 
     def create_category(self, category_item, session):
         service_name = category_item.pop('service_name')
@@ -73,18 +67,27 @@ class PostgresPipeline(object):
         session.add(article)
 
     def generate_sources(self, source_items, session):
+        session.autoflush = False
         sources = []
         for source_item in source_items:
-            source = session.query(models.Source).filter_by(url=source_item['url']).first()
-            if source:
+            if source_item['url']:
+                source = models.Source(**source_item)
+                media = self.find_or_create_media(source.url, session)
+                source.media = media
+                source.media.sources_count += 1
                 sources.append(source)
-            elif source_item['url']:
-                sources.append(models.Source(**source_item))
+        session.autoflush = True
         return sources
 
+    def find_or_create_media(self, url, session):
+        base_url = models.Media.extract_base_url(url)
+        media = session.query(models.Media).filter_by(base_url=base_url).first()
+        if media:
+            return media
+        media = models.Media(base_url=base_url, sources_count=0)
+        return media
+
     def find_service(self, service_name, session):
-        if service_name in self.cached_services:
-            return self.cached_services[service_name]
         return session.query(models.Service).filter_by(name=service_name).first()
 
     def find_or_create_category(self, category_name, service, session):
@@ -96,7 +99,5 @@ class PostgresPipeline(object):
         return category
 
     def find_category(self, category_name, service_id, session):
-        if category_name in self.cached_categories:
-            return self.cached_categories[category_name]
         query = {'name': category_name, 'service_id': service_id}
         return session.query(models.Category).filter_by(**query).first()

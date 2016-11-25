@@ -1,6 +1,14 @@
+from __future__ import unicode_literals
+
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
+
 
 Base = declarative_base()
 
@@ -13,7 +21,8 @@ class Service(Base):
     categories = relationship('Category')
 
     def __repr__(self):
-        return '<Service(id="{0}", name="{1}")>'.format(self.id, self.name)
+        template = '<Service(id="{0}", name="{1}")>'
+        return template.format(self.id, self.name).encode('utf-8')
 
 
 class Category(Base):
@@ -30,7 +39,8 @@ class Category(Base):
     articles = relationship('Article')
 
     def __repr__(self):
-        return '<Category(id="{0}", name="{1}")>'.format(self.id, self.name)
+        template = '<Category(id="{0}", name="{1}")>'
+        return template.format(self.id, self.name).encode('utf-8')
 
 
 class Article(Base):
@@ -53,7 +63,8 @@ class Article(Base):
     sources = relationship('Source')
 
     def __repr__(self):
-        return '<Article(id="{0}", url="{1}", title="{2}")>'.format(self.id, self.url, self.title)
+        template = '<Article(id="{0}", url="{1}", title="{2}")>'
+        return template.format(self.id, self.url, self.title).encode('utf-8')
 
 
 class Source(Base):
@@ -68,5 +79,26 @@ class Source(Base):
     article_id = Column(Integer, ForeignKey('articles.id'))
     article = relationship('Article', back_populates='sources')
 
+    media_id = Column(Integer, ForeignKey('medias.id'))
+    media = relationship('Media', back_populates='sources')
+
     def __repr__(self):
-        return '<Source(id="{0}", url="{1}", title="{2}")>'.format(self.id, self.url, self.title)
+        template = '<Source(id="{0}", url="{1}", title="{2}")>'
+        return template.format(self.id, self.url, self.title).encode('utf-8')
+
+class Media(Base):
+    __tablename__ = 'medias'
+
+    id = Column(Integer, primary_key=True)
+    base_url = Column(String(255))
+    sources_count = Column(Integer())
+
+    sources = relationship('Source')
+
+    def __repr__(self):
+        template = '<Media(id="{0}", base_url="{1}")>'
+        return template.format(self.id, self.base_url).encode('utf-8')
+
+    @staticmethod
+    def extract_base_url(url):
+        return urlparse(url).netloc
