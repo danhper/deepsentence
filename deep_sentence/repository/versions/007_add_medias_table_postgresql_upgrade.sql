@@ -6,4 +6,4 @@ CREATE TABLE medias (
 
 ALTER TABLE sources ADD COLUMN media_id INTEGER REFERENCES medias (id);
 CREATE INDEX ON sources (media_id);
-CREATE INDEX ON sources (sources_count);
+CREATE INDEX ON medias (sources_count);
