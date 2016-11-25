@@ -1,0 +1,21 @@
+---
+
+- name: Create scrapyd user
+  user: name={{ scrapyd_user }} comment="scrapyd user"
+
+- name: Install scrapyd
+  pip: name=scrapyd
+
+- name: Enable supervisor
+  service: name=supervisor enabled=yes
+
+- name: Add scrapyd config
+  template: src=scrapyd.conf dest=/etc/supervisor/conf.d/scrapyd.conf
+  register: scrapyd_config
+
+- name: Restart supervisor
+  service: name=supervisor state=restarted
+  when: scrapyd_config | changed
+
+- name: Start scrapyd
+  supervisorctl: name=scrapyd state=started

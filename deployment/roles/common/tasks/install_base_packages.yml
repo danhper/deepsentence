@@ -1,0 +1,12 @@
+---
+
+- name: Update packages cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: Install base packages
+  apt: name={{ item }} state=present
+  with_items:
+    - curl
+    - git
+    - sudo
+    - wget

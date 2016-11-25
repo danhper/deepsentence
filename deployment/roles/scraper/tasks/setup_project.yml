@@ -1,0 +1,13 @@
+---
+
+- name: Fetch project
+  git: repo={{ scraper_repository }} accept_hostkey=yes dest={{ scraper_project_dir }}
+  become: yes
+  become_user: "{{ username }}"
+  register: scraper_git_fetch
+
+- name: Install project dependencies
+  pip: requirements={{ scraper_project_dir }}/requirements.txt
+
+- name: Add env file
+  template: src=env dest={{ scraper_project_dir }}/.env owner={{ username }} group={{ username }}

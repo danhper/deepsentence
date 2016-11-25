@@ -1,0 +1,4 @@
+[defaults]
+inventory = inventory/production
+vault_password_file = $HOME/.ansible/vault_passwords/deep_sentence
+roles_path = ~/.ansible-roles

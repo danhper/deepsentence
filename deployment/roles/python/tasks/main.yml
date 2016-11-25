@@ -1,0 +1,45 @@
+---
+
+- name: Install necessary packages
+  apt: name={{ item }} state=present
+  with_items:
+    - build-essential
+    - libreadline-dev
+    - libssl-dev
+    - libbz2-dev
+    - libsqlite3-dev
+
+- name: Check Python installation
+  shell: "{{ python_prefix_path }}/bin/python --version 2>&1"
+  ignore_errors: yes
+  changed_when: no
+  register: python_installed_version
+
+- name: Check python-build installation
+  command: "/usr/local/bin/python-build --version"
+  ignore_errors: yes
+  changed_when: no
+  register: python_build
+
+- name: Set installation facts
+  set_fact:
+    python_installed: "{{ python_installed_version | succeeded and python_installed_version.stdout.find(python_version) != -1 }}"
+    python_build_installed: "{{ python_build | succeeded }}"
+
+- name: Clone pyenv
+  git: repo=https://github.com/yyuu/pyenv.git dest=/tmp/pyenv
+  when: not python_installed and not python_build_installed
+
+- name: Install python-build
+  command: /tmp/pyenv/plugins/python-build/install.sh
+  when: not python_installed and not python_build_installed
+
+- name: Clean pyenv
+  file: path=/tmp/pyenv state=absent
+
+- name: Install Python
+  command: /usr/local/bin/python-build {{ python_version }} {{ python_prefix_path }}
+  when: not python_installed
+
+- name: Upgrade pip
+  pip: name=pip state=latest

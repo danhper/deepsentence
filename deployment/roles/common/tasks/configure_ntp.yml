@@ -1,0 +1,10 @@
+---
+
+- name: Update apt cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: Install ntp
+  apt: name=ntp
+
+- name: Start and enable ntp
+  service: name=ntp state=started enabled=yes

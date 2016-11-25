@@ -1,0 +1,14 @@
+---
+
+- name: apply common configuration
+  hosts: all
+
+  roles:
+    - common
+
+- name: setup scraper
+  hosts: tag_Name_scraper
+
+  roles:
+    - { role: python, python_version: 2.7.12 }
+    - scraper

@@ -1,0 +1,4 @@
+---
+
+- name: Create DeepSentence user
+  user: name={{ username }} comment="DeepSentence user"
