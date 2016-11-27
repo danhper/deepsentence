@@ -4,7 +4,7 @@
 
 Copy `ansible.cfg.example` to `ansible.cfg` and customize to your needs.
 
-## Usage
+## Setup node
 
 To setup a node, add it to `inventory/production` and run
 
@@ -19,3 +19,9 @@ If the node does not have Python 2 installed, you will need to run
 ```
 
 first.
+
+## Deploy scraper
+
+```
+fab deploy
+```
