@@ -1,0 +1,22 @@
+#!/bin/bash
+
+BASE_URL="http://scraper.deepsentence.com"
+PROJECT="deep_sentence.scraper"
+SPIDER="LINE_NEWS"
+
+
+case "$1" in
+    "jobs")
+        curl -n "${BASE_URL}/listjobs.json?project=$PROJECT" ;;
+    "start")
+        curl -n "${BASE_URL}/schedule.json" -d "project=$PROJECT" -d "spider=$SPIDER" ;;
+    "cancel")
+        if [ $# -ne $2 ]; then
+            echo "cancel needs a job id"
+            exit 1
+        fi
+        curl -n "${BASE_URL}/cancel.json" -d "project=$PROJECT" -d "job=$2" ;;
+    *)
+        echo "usage: scraperctl (jobs | start | cancel)"
+        exit 1 ;;
+esac
