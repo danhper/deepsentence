@@ -11,3 +11,7 @@
 
 - name: Add env file
   template: src=env dest={{ scraper_project_dir }}/.env owner={{ username }} group={{ username }}
+
+- name: Install project
+  command: python setup.py install chdir={{ scraper_project_dir }}
+  when: scraper_git_fetch | changed

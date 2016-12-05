@@ -1,0 +1,12 @@
+---
+
+- name: Add jupyter config
+  template: src=jupyter.conf dest=/etc/supervisor/conf.d/jupyter.conf
+  register: jupyter_config
+
+- name: Restart supervisor
+  service: name=supervisor state=restarted
+  when: jupyter_config | changed
+
+- name: Start jupyter
+  supervisorctl: name=jupyter state=started

@@ -3,3 +3,4 @@
 - include: prepare.yml
 - include: setup_project.yml
 - include: setup_scrapyd.yml
+- include: setup_jupyter.yml
