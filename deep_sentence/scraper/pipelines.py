@@ -36,9 +36,10 @@ class PostgresPipeline(object):
 
     def parse_source(self, source, response):
         url = source.media.base_url
-        parser = find_parser_for(url)
-        if parser:
-            return parser.extract_content(response)
+        Parser = find_parser_for(url)
+        if Parser:
+            parser = Parser(response)
+            return parser.extract_content()
 
     def create_sources_deferred(self, sources, spider):
         deferred_list = []
