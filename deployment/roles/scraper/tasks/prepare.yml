@@ -7,7 +7,4 @@
     - supervisor
 
 - name: Install scrapyd-client
-  pip: name={{ item }}
-  with_items:
-    - scrapyd-client
-    - jupyter
+  pip: name=scrapyd-client executable=pip2

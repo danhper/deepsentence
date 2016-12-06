@@ -1,5 +1,17 @@
 ---
 
+- name: Install jupyter for pip2
+  pip: name=jupyter executable=pip2
+
+- name: Install jupyter for pip3
+  pip: name=jupyter executable=pip3
+
+- name: Install python2 kernel
+  command: ipython2 kernel install creates=/usr/local/share/jupyter/kernels/python2
+
+- name: Install python3 kernel
+  command: ipython3 kernel install creates=/usr/local/share/jupyter/kernels/python3
+
 - name: Add jupyter config
   template: src=jupyter.conf dest=/etc/supervisor/conf.d/jupyter.conf
   register: jupyter_config

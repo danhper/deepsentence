@@ -10,5 +10,6 @@
   hosts: tag_Name_scraper
 
   roles:
+    - { role: python, python_version: 3.5.2 }
     - { role: python, python_version: 2.7.12 }
     - scraper

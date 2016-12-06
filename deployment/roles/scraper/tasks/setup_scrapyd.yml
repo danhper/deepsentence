@@ -4,7 +4,7 @@
   user: name={{ scrapyd_user }} comment="scrapyd user"
 
 - name: Install scrapyd
-  pip: name=scrapyd
+  pip: name=scrapyd executable=pip2
 
 - name: Enable supervisor
   service: name=supervisor enabled=yes state=started

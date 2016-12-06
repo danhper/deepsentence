@@ -10,7 +10,7 @@
     - libsqlite3-dev
 
 - name: Check Python installation
-  shell: "{{ python_prefix_path }}/bin/python --version 2>&1"
+  shell: "{{ python_prefix_path }}/bin/python{{ python_version[0] }} --version 2>&1"
   ignore_errors: yes
   changed_when: no
   register: python_installed_version
