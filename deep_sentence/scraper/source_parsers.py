@@ -16,6 +16,10 @@ class BaseParser(object):
     def extract_content(self, response):
         raise NotImplementedError('extract_content must be implemented')
 
+    def extract_texts(self, response, selector):
+        texts = response.xpath(selector).extract()
+        return '\n'.join(self.strip_and_filter_texts(texts))
+
     def strip_texts(self, texts):
         return [text.strip() for text in texts]
 
@@ -40,5 +44,12 @@ class OriconParser(BaseParser):
         selector = '//*[contains(@class, "content")]' + \
                    '//*[contains(@class,"box-a")]' + \
                    '//*[self::p or self::span]//text()'
-        texts = response.xpath(selector).extract()
-        return '\n'.join(self.strip_and_filter_texts(texts))
+        return self.extract_texts(response, selector)
+
+
+class SanspoParser(BaseParser):
+    supported_urls = ['www.sanspo.com']
+
+    def extract_content(self, response):
+        selector = '//*[contains(@class, "NewsDetail")]//p/text()'
+        return self.extract_texts(response, selector)
