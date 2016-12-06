@@ -16,6 +16,12 @@ class BaseParser(object):
     def extract_content(self, response):
         raise NotImplementedError('extract_content must be implemented')
 
+    def strip_texts(self, texts):
+        return [text.strip() for text in texts]
+
+    def strip_and_filter_texts(self, texts):
+        return [text for text in self.strip_texts(texts) if text]
+
 
 class JijiParser(BaseParser):
     supported_urls = ['www.jiji.com']
@@ -26,3 +32,13 @@ class JijiParser(BaseParser):
             return
         content = article_block[0].xpath('./*[contains(@class, "ArticleText")]/text()').extract()
         return '\n'.join(content)
+
+class OriconParser(BaseParser):
+    supported_urls = ['www.oricon.co.jp']
+
+    def extract_content(self, response):
+        selector = '//*[contains(@class, "content")]' + \
+                   '//*[contains(@class,"box-a")]' + \
+                   '//*[self::p or self::span]//text()'
+        texts = response.xpath(selector).extract()
+        return '\n'.join(self.strip_and_filter_texts(texts))
