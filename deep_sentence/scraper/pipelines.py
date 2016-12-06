@@ -4,7 +4,7 @@ from twisted.internet.defer import DeferredList
 
 from deep_sentence.scraper import items
 from deep_sentence import db, models
-from source_parsers import find_parser_for
+from .source_parsers import find_parser_for
 
 
 class PostgresPipeline(object):
@@ -21,7 +21,8 @@ class PostgresPipeline(object):
             return self.process_article(item, spider)
         return item
 
-    def parse_sources(self, results, (item, article_id)):
+    def parse_sources(self, results, params):
+        (item, article_id) = params
         with db.session_scope(self.make_session) as session:
             article = session.query(models.Article).get(article_id)
             for (source, (success, response)) in zip(article.sources, results):
