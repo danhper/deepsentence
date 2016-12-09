@@ -61,3 +61,37 @@ class ITMediaParser(BaseParser):
 
     def extract_content(self):
         return self.extract_texts('//*[@id="cmsBody"]//p/text()')
+
+class SponichiParser(BaseParser):
+    supported_urls = ['m.sponichi.co.jp']
+
+    def extract_content(self):
+        article  = self.extract_texts('//*[contains(@class, "articleBody")]/p/text()')
+        readmore = self.extract_texts('//*[contains(@class, "continue")]/text()')
+        return article + readmore
+        
+# class MatomeNaverParser(BaseParser):
+#     supported_urls = ['matome.naver.jp']
+
+#     def extract_content(self):
+#         return
+
+class DailyParser(BaseParser):
+    supported_urls = ['sp.daily.co.jp']
+
+    def extract_content(self):
+        return self.extract_texts('//*[@id="NWrelart:Body"]/text()')
+
+# class NatalieParser(BaseParser):
+#     supported_urls = ['sp.daily.co.jp']
+
+#     def extract_content(self):
+#         return self.extract_texts('//*[@class="NA_articleBody"]/text()')
+
+class MynaviParser(BaseParser):
+    supported_urls = ['news.mynavi.jp']
+
+    def extract_content(self):
+        return self.extract_texts('//*[contains(@class, "article-content")]/p/text()')
+
+    
