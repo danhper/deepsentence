@@ -82,12 +82,15 @@ class DailyParser(BaseParser):
     def extract_content(self):
         return self.extract_texts('//*[@id="NWrelart:Body"]/text()')
 
-# class NatalieParser(BaseParser):
-#     supported_urls = ['sp.daily.co.jp']
+class NatalieParser(BaseParser):
+    supported_urls = ['natalie.mu']
 
-#     def extract_content(self):
-#         return self.extract_texts('//*[@class="NA_articleBody"]/text()')
-
+    def extract_content(self):
+        nl = ''.join(self.response.xpath('//*[contains(@class, "NA_newsLead")]//*/text()').extract())
+        nb = ''.join(self.response.xpath('//*[contains(@class, "NA_newsBody")]/p//text()').extract())
+        filtered = [text for text in (nl+nb).split('。') if text]
+        return [text+'。' for text in filtered]
+        
 class MynaviParser(BaseParser):
     supported_urls = ['news.mynavi.jp']
 
