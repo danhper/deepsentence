@@ -85,3 +85,10 @@ class MdprParser(BaseParser):
 
     def extract_content(self):
         return self.extract_texts('//*[contains(@class, "topic-body")]/div[contains(@class, "m1 cf")]/text()')
+
+class ThisKijiIsParser(BaseParser):
+    supported_urls = ['http://this.kiji.is']
+
+    def extract_content(self):
+        return self.extract_texts('//*[contains(@class, "main__article")]//p/text()')
+
