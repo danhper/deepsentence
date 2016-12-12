@@ -61,3 +61,23 @@ class ITMediaParser(BaseParser):
 
     def extract_content(self):
         return self.extract_texts('//*[@id="cmsBody"]//p/text()')
+
+#class News47Parser(BaseParser):
+#    """そもそも他のメディアの記事の冒頭部分を表示するのがコンセプトのため対象としてふさわしくないかも"""
+#    supported_urls = ['www.47news.jp']
+#
+#    def extract_content(self):
+#        return self.extract_texts('')
+
+class CookpadParser(BaseParser):
+    supported_urls = ['cookpad.com']
+
+    def extract_content(self):
+        if "recipe" in self.response.url:
+            return self.extract_texts('//*[@id="recipe"]/div[contains(@class, "description")]/text()')
+        elif "articles" in self.response.url:
+            return self.extract_texts('//*[@id="main"]//p/text()')
+        else:
+            return None
+
+
