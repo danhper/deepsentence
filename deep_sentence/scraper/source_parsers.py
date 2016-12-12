@@ -92,3 +92,9 @@ class ThisKijiIsParser(BaseParser):
     def extract_content(self):
         return self.extract_texts('//*[contains(@class, "main__article")]//p/text()')
 
+class FashionPressParser(BaseParser):
+    supported_urls = ["www.fashion-press.net"]
+
+    def extract_content(self):
+        return self.extract_texts('//*[@id="entry_article"]//p/text()')
+
