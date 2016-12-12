@@ -80,4 +80,8 @@ class CookpadParser(BaseParser):
         else:
             return None
 
+class MdprParser(BaseParser):
+    supported_urls = ['mdpr.jp']
 
+    def extract_content(self):
+        return self.extract_texts('//*[contains(@class, "topic-body")]/div[contains(@class, "m1 cf")]/text()')
