@@ -62,6 +62,7 @@ class ITMediaParser(BaseParser):
     def extract_content(self):
         return self.extract_texts('//*[@id="cmsBody"]//p/text()')
 
+
 class SponichiParser(BaseParser):
     supported_urls = ['m.sponichi.co.jp']
 
@@ -69,7 +70,7 @@ class SponichiParser(BaseParser):
         article  = self.extract_texts('//*[contains(@class, "articleBody")]/p/text()')
         readmore = self.extract_texts('//*[contains(@class, "continue")]/text()')
         return article + readmore
-        
+
 # class MatomeNaverParser(BaseParser):
 #     supported_urls = ['matome.naver.jp']
 
@@ -90,11 +91,16 @@ class NatalieParser(BaseParser):
         nb = ''.join(self.response.xpath('//*[contains(@class, "NA_newsBody")]/p//text()').extract())
         filtered = [text for text in (nl+nb).split('。') if text]
         return [text+'。' for text in filtered]
-        
+
 class MynaviParser(BaseParser):
     supported_urls = ['news.mynavi.jp']
 
     def extract_content(self):
         return self.extract_texts('//*[contains(@class, "article-content")]/p/text()')
 
-    
+
+class SankeiParser(BaseParser):
+    supported_urls = ['www.sankei.com']
+
+    def extract_content(self):
+        return self.extract_texts('//*[contains(@class, "articleText")]//article//p/text()')
