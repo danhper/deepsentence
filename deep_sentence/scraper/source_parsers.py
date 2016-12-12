@@ -62,7 +62,6 @@ class ITMediaParser(BaseParser):
     def extract_content(self):
         return self.extract_texts('//*[@id="cmsBody"]//p/text()')
 
-
 class SponichiParser(BaseParser):
     supported_urls = ['m.sponichi.co.jp']
 
@@ -104,3 +103,38 @@ class SankeiParser(BaseParser):
 
     def extract_content(self):
         return self.extract_texts('//*[contains(@class, "articleText")]//article//p/text()')
+#class News47Parser(BaseParser):
+#
+#    supported_urls = ['www.47news.jp']
+#
+#    def extract_content(self):
+#        return self.extract_texts('')
+
+class CookpadParser(BaseParser):
+    supported_urls = ['cookpad.com']
+
+    def extract_content(self):
+        if "recipe" in self.response.url:
+            return self.extract_texts('//*[@id="recipe"]/div[contains(@class, "description")]/text()')
+        elif "articles" in self.response.url:
+            return self.extract_texts('//*[@id="main"]//p/text()')
+        else:
+            return None
+
+class MdprParser(BaseParser):
+    supported_urls = ['mdpr.jp']
+
+    def extract_content(self):
+        return self.extract_texts('//*[contains(@class, "topic-body")]/div[contains(@class, "m1 cf")]/text()')
+
+class ThisKijiIsParser(BaseParser):
+    supported_urls = ['http://this.kiji.is']
+
+    def extract_content(self):
+        return self.extract_texts('//*[contains(@class, "main__article")]//p/text()')
+
+class FashionPressParser(BaseParser):
+    supported_urls = ["www.fashion-press.net"]
+
+    def extract_content(self):
+        return self.extract_texts('//*[@id="entry_article"]//p/text()')
