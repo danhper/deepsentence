@@ -11,7 +11,7 @@ def try_load_dotenv():
         load_dotenv(dot_env_path)
 
 
-PROJECT_ROOT = path.dirname(path.dirname(inspect.getfile(inspect.currentframe())))
+PROJECT_ROOT = os.environ.get('PROJECT_ROOT', path.dirname(path.dirname(inspect.getfile(inspect.currentframe()))))
 
 try_load_dotenv()
 
