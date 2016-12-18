@@ -19,7 +19,16 @@ class PostgresPipeline(object):
             return self.process_category(item)
         elif isinstance(item, items.ArticleItem):
             return self.process_article(item, spider)
+        elif isinstance(item, items.SourceItem) and item['id'] is not None:
+            return self.save_source_content(item)
         return item
+
+
+    def save_source_content(self, item):
+        with db.session_scope(self.make_session) as session:
+            source = session.query(models.Source).get(item['id'])
+            source.content = item['content']
+            return source
 
     def parse_sources(self, results, params):
         (item, article_id) = params

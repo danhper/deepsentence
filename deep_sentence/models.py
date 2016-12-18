@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import sys
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from sqlalchemy.orm import relationship
@@ -12,6 +13,14 @@ except ImportError:
 
 Base = declarative_base()
 
+
+def get_string_repr(string):
+    if sys.version_info.major == 3:
+        return string
+    else:
+        return string.encode('utf-8')
+
+
 class Service(Base):
     __tablename__ = 'services'
     id = Column(Integer, primary_key=True)
@@ -22,7 +31,7 @@ class Service(Base):
 
     def __repr__(self):
         template = '<Service(id="{0}", name="{1}")>'
-        return template.format(self.id, self.name).encode('utf-8')
+        return get_string_repr(template.format(self.id, self.name))
 
 
 class Category(Base):
@@ -40,7 +49,7 @@ class Category(Base):
 
     def __repr__(self):
         template = '<Category(id="{0}", name="{1}")>'
-        return template.format(self.id, self.name).encode('utf-8')
+        return get_string_repr(template.format(self.id, self.name))
 
 
 class Article(Base):
@@ -64,7 +73,7 @@ class Article(Base):
 
     def __repr__(self):
         template = '<Article(id="{0}", url="{1}", title="{2}")>'
-        return template.format(self.id, self.url, self.title).encode('utf-8')
+        return get_string_repr(template.format(self.id, self.url, self.title))
 
 
 class Source(Base):
@@ -84,7 +93,7 @@ class Source(Base):
 
     def __repr__(self):
         template = '<Source(id="{0}", url="{1}", title="{2}")>'
-        return template.format(self.id, self.url, self.title).encode('utf-8')
+        return get_string_repr(template.format(self.id, self.url, self.title))
 
 class Media(Base):
     __tablename__ = 'medias'
@@ -97,7 +106,7 @@ class Media(Base):
 
     def __repr__(self):
         template = '<Media(id="{0}", base_url="{1}")>'
-        return template.format(self.id, self.base_url).encode('utf-8')
+        return get_string_repr(template.format(self.id, self.base_url))
 
     @staticmethod
     def extract_base_url(url):

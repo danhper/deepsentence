@@ -1,13 +1,18 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import sys
 
-def find_parser_for(url):
+def get_parsers():
     module = sys.modules[__name__]
-    for attr in dir(module):
-        if not attr.endswith('Parser'):
-            continue
-        klass = getattr(module, attr)
-        if url in klass.supported_urls:
-            return klass
+    return [getattr(module, attr) for attr in dir(module) if attr.endswith('Parser')]
+
+
+def find_parser_for(url):
+    for Parser in get_parsers():
+        if url in Parser.supported_urls:
+            return Parser
 
 
 class BaseParser(object):
@@ -89,7 +94,7 @@ class NatalieParser(BaseParser):
         nl = ''.join(self.response.xpath('//*[contains(@class, "NA_newsLead")]//*/text()').extract())
         nb = ''.join(self.response.xpath('//*[contains(@class, "NA_newsBody")]/p//text()').extract())
         filtered = [text for text in (nl+nb).split('。') if text]
-        return [text+'。' for text in filtered]
+        return [text + '。' for text in filtered]
 
 class MynaviParser(BaseParser):
     supported_urls = ['news.mynavi.jp']

@@ -20,5 +20,7 @@ class CategoryItem(scrapy.Item):
 
 
 class SourceItem(scrapy.Item):
+    id = scrapy.Field()
     title = scrapy.Field()
     url = scrapy.Field()
+    content = scrapy.Field()
