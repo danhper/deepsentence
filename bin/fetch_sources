@@ -60,7 +60,7 @@ def fetch_batch(runner, session_maker):
     with db.session_scope(session_maker) as session:
         new_count = query_sources(session, count=True)
 
-    logging.log('batch finished. articles without content: original=%d, new=%d',
+    logging.info('batch finished. articles without content: original=%d, new=%d',
                 original_count, new_count)
     if new_count < original_count:
         fetch_batch(runner, session_maker)
