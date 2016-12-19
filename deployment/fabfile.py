@@ -12,7 +12,7 @@ BRANCH = 'master'
 def deploy():
     with cd(CODE_DIR):
         run("git fetch")
-        sha = run("git rev-parse {0}".format(BRANCH))
+        sha = run("git rev-parse origin/{0}".format(BRANCH))
         run("git checkout {0}".format(sha))
         run("python setup.py install --user")
         run("scrapyd-deploy")
