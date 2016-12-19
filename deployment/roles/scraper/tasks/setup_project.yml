@@ -13,5 +13,15 @@
   template: src=env dest={{ scraper_project_dir }}/.env owner={{ username }} group={{ username }}
 
 - name: Install project
-  command: python setup.py install chdir={{ scraper_project_dir }}
+  command: python setup.py install --user chdir={{ scraper_project_dir }}
+  become: yes
+  become_user: "{{ username }}"
   when: scraper_git_fetch | changed
+
+- name: Add supervisor fetch sources
+  template: src=fetch_sources.conf dest=/etc/supervisor/conf.d/fetch_sources.conf
+  register: fetch_sources_config
+
+- name: Restart supervisor
+  service: name=supervisor state=restarted
+  when: fetch_sources_config | changed

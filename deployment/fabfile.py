@@ -14,4 +14,5 @@ def deploy():
         run("git fetch")
         sha = run("git rev-parse {0}".format(BRANCH))
         run("git checkout {0}".format(sha))
+        run("python setup.py install --user")
         run("scrapyd-deploy")

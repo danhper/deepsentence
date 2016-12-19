@@ -1,5 +1,6 @@
 #!/bin/bash
 
+SSH_URL="scraper.internal.deepsentence.com"
 BASE_URL="http://scraper.deepsentence.com"
 PROJECT="deep_sentence.scraper"
 SPIDER="LINE_NEWS"
@@ -10,13 +11,19 @@ case "$1" in
         curl -n "${BASE_URL}/listjobs.json?project=$PROJECT" ;;
     "start")
         curl -n "${BASE_URL}/schedule.json" -d "project=$PROJECT" -d "spider=$SPIDER" ;;
+    "fetch_sources")
+        if [ $# -ne 2 ] || [ $2 != "start" -a $2 != "stop" -a $2 != "status" ]; then
+            echo "usage: scraperctl fetch_sources (start | status | stop)"
+            exit 1
+        fi
+        ssh $SSH_URL supervisorctl $2 fetch_sources ;;
     "cancel")
-        if [ $# -ne $2 ]; then
+        if [ $# -ne 2 ]; then
             echo "cancel needs a job id"
             exit 1
         fi
         curl -n "${BASE_URL}/cancel.json" -d "project=$PROJECT" -d "job=$2" ;;
     *)
-        echo "usage: scraperctl (jobs | start | cancel)"
+        echo "usage: scraperctl (jobs | start | fetch_sources | cancel)"
         exit 1 ;;
 esac
