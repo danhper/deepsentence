@@ -3,7 +3,7 @@
 SSH_URL="scraper.internal.deepsentence.com"
 BASE_URL="http://scraper.deepsentence.com"
 PROJECT="deep_sentence.scraper"
-SPIDER="LINE_NEWS"
+SPIDER="line_news"
 FETCH_SOURCES_LOGFILE="/home/deep_sentence/deep_sentence/tmp/fetch_sources_stderr.log"
 
 
