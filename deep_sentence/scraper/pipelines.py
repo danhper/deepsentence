@@ -28,7 +28,7 @@ class PostgresPipeline(object):
         with db.session_scope(self.make_session) as session:
             source = session.query(models.Source).get(item['id'])
             source.content = item['content']
-            return source
+        return item
 
     def parse_sources(self, results, params):
         (item, article_id) = params

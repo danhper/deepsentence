@@ -8,12 +8,11 @@ from scrapy.utils.log import configure_logging
 
 from sqlalchemy.orm import joinedload
 
-from twisted.internet import reactor, defer
+from twisted.internet import defer
 
 from deep_sentence.scraper import source_parsers
 from deep_sentence import db, models
 from deep_sentence.utils import pid_utils
-
 
 
 NAME = 'fetch_sources'
@@ -22,8 +21,6 @@ PARSABLE_URLS = [url for parser in source_parsers.get_parsers() for url in parse
 
 
 def clean_exit():
-    if reactor.running:
-        reactor.stop()
     pid_utils.clean_pid_file(NAME)
 
 
@@ -66,7 +63,6 @@ def fetch_batch(runner, session_maker):
         fetch_batch(runner, session_maker)
     else:
         clean_exit()
-
 
 
 def main():
