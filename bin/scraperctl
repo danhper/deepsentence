@@ -4,7 +4,40 @@ SSH_URL="scraper.internal.deepsentence.com"
 BASE_URL="http://scraper.deepsentence.com"
 PROJECT="deep_sentence.scraper"
 SPIDER="LINE_NEWS"
+FETCH_SOURCES_LOGFILE="/home/deep_sentence/deep_sentence/tmp/fetch_sources_stderr.log"
 
+
+function fetch_sources_usage() {
+    echo "usage: scraperctl fetch_sources (start | status | stop | logs)"
+    exit 1
+}
+
+function fetch_sources() {
+    if [ $# -ne 1 ]; then
+        fetch_sources_usage
+    fi
+    case "$1" in
+        "start" | "status" | "stop")
+        ssh $SSH_URL supervisorctl $1 fetch_sources ;;
+        "logs")
+        ssh $SSH_URL tail -f $FETCH_SOURCES_LOGFILE ;;
+        *)
+        fetch_sources_usage ;;
+    esac
+}
+
+function cancel() {
+  if [ $# -ne 1 ]; then
+      echo "cancel needs a job id"
+      exit 1
+  fi
+  curl -n "${BASE_URL}/cancel.json" -d "project=$PROJECT" -d "job=$1"
+}
+
+function usage() {
+    echo "usage: scraperctl (jobs | start | fetch_sources | cancel)"
+    exit 1
+}
 
 case "$1" in
     "jobs")
@@ -12,18 +45,9 @@ case "$1" in
     "start")
         curl -n "${BASE_URL}/schedule.json" -d "project=$PROJECT" -d "spider=$SPIDER" ;;
     "fetch_sources")
-        if [ $# -ne 2 ] || [ $2 != "start" -a $2 != "stop" -a $2 != "status" ]; then
-            echo "usage: scraperctl fetch_sources (start | status | stop)"
-            exit 1
-        fi
-        ssh $SSH_URL supervisorctl $2 fetch_sources ;;
+        fetch_sources ${@:2} ;;
     "cancel")
-        if [ $# -ne 2 ]; then
-            echo "cancel needs a job id"
-            exit 1
-        fi
-        curl -n "${BASE_URL}/cancel.json" -d "project=$PROJECT" -d "job=$2" ;;
+        cancel ${@:2} ;;
     *)
-        echo "usage: scraperctl (jobs | start | fetch_sources | cancel)"
-        exit 1 ;;
+        usage ;;
 esac
