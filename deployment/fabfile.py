@@ -14,5 +14,11 @@ def deploy():
         run("git fetch")
         sha = run("git rev-parse origin/{0}".format(BRANCH))
         run("git checkout {0}".format(sha))
-        run("python setup.py install --user")
+
+        # install with both pip2 and pip3 to be able to use both jupyter kernels
+        run("pip2 install -r requirements.txt --user")
+        run("pip3 install -r requirements.txt --user")
+
+        # scrapyd only supports python2
+        run("python2 setup.py install --user")
         run("scrapyd-deploy")

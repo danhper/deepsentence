@@ -9,6 +9,9 @@
 - name: Install project dependencies
   pip: requirements={{ scraper_project_dir }}/requirements.txt
 
+- name: Install project dependencies with python 3
+  pip: requirements={{ scraper_project_dir }}/requirements.txt executable=pip3
+
 - name: Add env file
   template: src=env dest={{ scraper_project_dir }}/.env owner={{ username }} group={{ username }}
 

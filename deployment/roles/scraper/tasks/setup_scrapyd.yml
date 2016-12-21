@@ -1,10 +1,10 @@
 ---
 
-- name: Create scrapyd user
-  user: name={{ scrapyd_user }} comment="scrapyd user"
-
 - name: Install scrapyd
   pip: name=scrapyd executable=pip2
+
+- name: Create scrapyd directory
+  file: path={{ user_home }}/scrapyd state=directory owner={{ username }} group={{ username }}
 
 - name: Enable supervisor
   service: name=supervisor enabled=yes state=started
