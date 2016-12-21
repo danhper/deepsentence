@@ -1,0 +1,20 @@
+---
+
+- name: Install necessary pacakges
+  apt: name={{ item }}
+  with_items:
+    - supervisor
+
+- name: Fetch html-extractor.jar
+  get_url: url={{ html_extractor_jar_url }} dest={{ html_extractor_jar_path }} owner={{ username }} group={{ username }}
+
+- name: Install supervisor html_extractor.conf
+  template: src=html_extractor.conf dest=/etc/supervisor/conf.d/html_extractor.conf
+  register: html_extractor_config
+
+- name: Restart supervisor
+  service: name=supervisor state=restarted
+  when: html_extractor_config | changed
+
+- name: Ensure html_extractor is started
+  supervisorctl: name=html_extractor state=started

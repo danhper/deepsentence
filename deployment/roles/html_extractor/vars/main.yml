@@ -1,0 +1,4 @@
+---
+
+html_extractor_jar_url: "https://github.com/tuvistavie/html-extractor-miniserver/releases/download/v0.2/html-extractor-miniserver.jar"
+html_extractor_jar_path: "{{ user_home }}/html-extractor.jar"

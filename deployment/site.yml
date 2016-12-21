@@ -13,3 +13,5 @@
     - { role: python, python_version: 3.5.2 }
     - { role: python, python_version: 2.7.12 }
     - scraper
+    - { role: williamyeh.oracle-java, java_version: 8 }
+    - html_extractor

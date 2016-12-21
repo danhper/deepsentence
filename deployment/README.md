@@ -1,8 +1,15 @@
 # deep_sentence deployment
 
-## Configuration
+## Setup
 
 Copy `ansible.cfg.example` to `ansible.cfg` and customize to your needs.
+
+Then, install dependencies
+
+```
+pip install -r requirements.txt
+ansible-galaxy install -r requirements.yml
+```
 
 ## Setup node
 
