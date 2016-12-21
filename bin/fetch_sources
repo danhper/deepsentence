@@ -17,7 +17,6 @@ from deep_sentence.utils import pid_utils
 
 NAME = 'fetch_sources'
 BULK_SIZE = 300
-PARSABLE_URLS = [url for parser in source_parsers.get_parsers() for url in parser.supported_urls]
 
 
 def clean_exit():
@@ -35,8 +34,7 @@ def query_sources(session, count=False, limit=BULK_SIZE):
     base_query = session.query(models.Source). \
                          join(models.Source.media). \
                          options(joinedload(models.Source.media)). \
-                         filter(models.Source.content == None). \
-                         filter(models.Media.base_url.in_(PARSABLE_URLS))
+                         filter(models.Source.content == None)
     if count:
         return base_query.count()
     else:
@@ -58,7 +56,7 @@ def fetch_batch(runner, session_maker):
         new_count = query_sources(session, count=True)
 
     logging.info('batch finished. articles without content: original=%d, new=%d',
-                original_count, new_count)
+                 original_count, new_count)
     if new_count < original_count:
         fetch_batch(runner, session_maker)
     else:

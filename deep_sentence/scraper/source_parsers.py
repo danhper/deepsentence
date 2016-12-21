@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-
 import sys
+
+import requests
+
+from deep_sentence import settings
+
 
 def get_parsers():
     module = sys.modules[__name__]
@@ -13,6 +17,7 @@ def find_parser_for(url):
     for Parser in get_parsers():
         if url in Parser.supported_urls:
             return Parser
+    return DefaultParser
 
 
 class BaseParser(object):
@@ -143,3 +148,15 @@ class FashionPressParser(BaseParser):
 
     def extract_content(self):
         return self.extract_texts('//*[@id="entry_article"]//p/text()')
+
+
+class DefaultParser(BaseParser):
+    def extract_content(self):
+        r = self.make_request()
+        if r.status_code == 200:
+            return r.text
+
+    def make_request(self):
+        return requests.get(settings.HTML_EXTRACTOR_URL,
+                            params={'url': self.response.url},
+                            auth=settings.HTML_EXTRACTOR_CREDENTIALS)

@@ -18,6 +18,9 @@ sources into a single short summary.
 * Python 3.5
 * [psycopg2 requirements](http://initd.org/psycopg/docs/install.html)
 
+The scraper module also relies on [html-extractor-miniserver](https://github.com/tuvistavie/html-extractor-miniserver) which
+is available at http://extractor.deepsentence.com
+
 ### Installing dependencies
 
 Setup a new virtualenv environment if you want, then simply run

@@ -16,5 +16,13 @@ PROJECT_ROOT = os.environ.get('PROJECT_ROOT', path.dirname(path.dirname(inspect.
 try_load_dotenv()
 
 DATABASE_URL = os.environ.get('DATABASE_URL', 'postgres://localhost/deep_sentence_dev')
+HTML_EXTRACTOR_BASE_URL = os.environ.get('HTML_EXTRACTOR_BASE_URL', 'http://extractor.deepsentence.com')
+HTML_EXTRACTOR_URL = path.join(HTML_EXTRACTOR_BASE_URL, 'extract')
+
+HTML_EXTRACTOR_CREDENTIALS = (
+    os.environ.get('HTML_EXTRACTOR_USER', 'deep_sentence'),
+    os.environ.get('HTML_EXTRACTOR_PASSWORD', ''),
+)
+
 
 FIXTURES_PATH = path.join(PROJECT_ROOT, 'deep_sentence', 'fixtures')
