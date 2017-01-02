@@ -149,6 +149,50 @@ class FashionPressParser(BaseParser):
     def extract_content(self):
         return self.extract_texts('//*[@id="entry_article"]//p/text()')
 
+class hochiParser(BaseParser):
+    supported_urls = ["www.hochi.co.jp"]
+
+    def extract_content(self):
+        def parnum(number):
+            return '//*[contains(@class, "par'+ str(number) + '")]/text()'
+
+        text = []
+        for i in range(10):
+            if (self.response.xpath(parnum(i)).extract()):
+                text = text + self.response.xpath(parnum(i)).extract()
+
+        if not text:
+            return
+
+        return '\n'.join(text)
+
+class narinariParser(BaseParser):
+    supported_urls = ["www.narinari.com"]
+
+    def extract_content(self):
+        return self.extract_texts('//*[@id="entry_content"]/text()')
+
+class FashionSnapParser(BaseParser):
+    supported_urls = ["www.fashionsnap.com"]
+
+    def extract_content(self):
+        return self.extract_texts('//*[contains(@itemprop, "articleBody")]//p/text()')
+
+
+# howCollect.comはscrapyで正常に読み取れない模様
+# とにかく空きにしておきます
+# class howCollectParser(BaseParser):
+
+# ここもスクラップできない気がするですが…
+# 後ほどもう少しいじって見ます．
+
+class menjoyParser(BaseParser):
+    supported_urls = ['www.men-joy.jp']
+
+    def extract_content(self):
+        abstract  = self.extract_texts('//*[contains(@class, "lead_text_contet")]/p/text()')
+        readmore = self.extract_texts('//*[contains(@itemprop, "articleBody mainEntityOfPage")]/text()')
+        return abstract + readmore
 
 class DefaultParser(BaseParser):
     def extract_content(self):
