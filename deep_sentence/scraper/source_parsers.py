@@ -183,15 +183,15 @@ class FashionSnapParser(BaseParser):
 # とにかく空きにしておきます
 # class howCollectParser(BaseParser):
 
-# ここもスクラップできない気がするですが…
-# 後ほどもう少しいじって見ます．
+# 書き直しましたが，記事的に役に立たない気がします．
+# 一応残しておきます．
 
 class menjoyParser(BaseParser):
     supported_urls = ['www.men-joy.jp']
 
     def extract_content(self):
-        abstract  = self.extract_texts('//*[contains(@class, "lead_text_contet")]/p/text()')
-        readmore = self.extract_texts('//*[contains(@itemprop, "articleBody mainEntityOfPage")]/text()')
+        abstract = self.extract_texts('//*[@class="lead_text_contet"]/text()')
+        readmore = self.extract_texts('//*[@class="p402_premium"]//p/text()')
         return abstract + readmore
 
 class DefaultParser(BaseParser):
