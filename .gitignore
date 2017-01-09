@@ -18,8 +18,8 @@ data/scripts/debug/connect_db.sh
 **/.ipynb_checkpoints/*
 paper
 data/scripts/debug
+data/
 
-data
 ABS/result/
 ABS/scripts_variable_length.bk
 ABS/data/
