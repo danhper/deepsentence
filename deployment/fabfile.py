@@ -19,6 +19,8 @@ def deploy():
         run("pip2 install -r requirements.txt --user")
         run("pip3 install -r requirements.txt --user")
 
+        run("python3 setup.py install --user")
+
         # scrapyd only supports python2
         run("python2 setup.py install --user")
         run("scrapyd-deploy")
