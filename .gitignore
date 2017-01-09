@@ -10,3 +10,17 @@ tmp/*
 !/models/.keep
 
 deep_sentence/webapp/static
+
+data/dataset
+data/w2v_model
+data/scripts/debug/connect_db.sh
+**/.ipynb_checkpoints/*
+**/.ipynb_checkpoints/*
+paper
+data/scripts/debug
+
+ABS/result/
+ABS/scripts_variable_length.bk
+ABS/data/
+ABS/scripts/debug/
+data/scripts/debug/
