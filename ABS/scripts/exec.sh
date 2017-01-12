@@ -6,7 +6,7 @@ REUTERS_PATHS_TEMPLATE='../../../scraper/output/reuters/\*/\*/\*.csv'
 REUTERS_DATASET_DIR='../data/dataset/reuters'
 mkdir -p ${REUTERS_DATASET_DIR}
 
-if [ -f ${REUTERS_DATASET_DIR}/train.pkl -a -f ${REUTERS_DATASET_DIR}/test.pkl ]
+if [ -f ${REUTERS_DATASET_DIR}/train.csv -a -f ${REUTERS_DATASET_DIR}/test.csv -a -f ${REUTERS_DATASET_DIR}/dictionary.pkl ]
 then
 	:
 else
@@ -16,12 +16,13 @@ else
 fi
 
 
-MODEL_PATH='../result/model/reuters.ckpt'
-mkdir -p ../result/model
+MODEL_DIR='../result/models/reuters'
+mkdir -p ${MODEL_DIR}
 python pyscripts/train_ABS.py \
-	   --dataset_path ${REUTERS_DATASET_DIR}/train.pkl \
-	   --save_path ${MODEL_PATH}
+	   --dataset_path ${REUTERS_DATASET_DIR}/train.csv \
+	   --dictionary_path ${REUTERS_DATASET_DIR}/dictionary.pkl \
+	   --save_dir ${MODEL_DIR}
 
-python pyscripts/decoder_ABS.py \
-	   --dataset_path ${REUTERS_DATASET_PATH}/test.pkl \
-	   --model_path ${MODEL_PATH} 
+# python pyscripts/decoder_ABS.py \
+# 	   --dataset_path ${REUTERS_DATASET_DIR}/test.pkl \
+# 	   --model_dir ${MODEL_DIR} 

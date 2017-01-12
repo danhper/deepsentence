@@ -31,23 +31,23 @@ class NNLMmodel(object):
         # C: window_size
         # V: vocab_size
         # D: embedding_size
-        self.y_c = tf.placeholder(tf.int32, shape=[batch_size, window_size]) # window_sizeを可変にする必要があるだろね
-        self.E = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0)) # 乱数の設定を参照
+        self.y_c = tf.placeholder(tf.int32, shape=[batch_size, window_size]) 
+        self.E = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0), name='E') # 乱数の設定を参照
         self.tilde_y_c = tf.reshape(tf.nn.embedding_lookup(self.E, self.y_c), shape=[batch_size, window_size*embedding_size])
 
         ### fully connected layer ###
         # U: tilde_y_c(CD) -> h(H)
         # H: hidden_size
         self.U_w = tf.Variable(tf.truncated_normal((window_size*embedding_size, hidden_size),
-                                                   stddev=1.0/math.sqrt(hidden_size))) # 乱数の設定を参照
-        self.U_b = tf.Variable(tf.zeros([hidden_size]))
+                                                   stddev=1.0/math.sqrt(hidden_size)), name='U_w') # 乱数の設定を参照
+        self.U_b = tf.Variable(tf.zeros([hidden_size]), name='U_b')
         self.h = tf.nn.tanh(tf.matmul(self.tilde_y_c, self.U_w) + self.U_b)
 
         ### fully connected layer ####
         # V_: h(H) -> p(y_i+1|x, y_c;theta)(V)
         self.V_w = tf.Variable(tf.truncated_normal((hidden_size, vocab_size),
-                                                   stddev=1.0/math.sqrt(vocab_size))) # 乱数の設定を参照
-        self.V_b = tf.Variable(tf.zeros([vocab_size]))
+                                                   stddev=1.0/math.sqrt(vocab_size)), name='V_w') # 乱数の設定を参照
+        self.V_b = tf.Variable(tf.zeros([vocab_size]), name='V_b')
         self.prob_from_h = tf.matmul(self.h, self.V_w) + self.V_b
 
         ### encoder ###
@@ -64,9 +64,9 @@ class NNLMmodel(object):
         ### fully connceted layer ###
         # W: enc(H) ->  p(y_i+1|x, y_c;theta)(V)
         self.W_w = tf.Variable(tf.truncated_normal((hidden_size, vocab_size),
-                                                   stddev=1.0/math.sqrt(vocab_size))) # 乱数の設定を参照
-        self.W_b = tf.Variable(tf.zeros([vocab_size]))
-        self.prob_from_enc = tf.matmul(self.h, self.W_w) + self.W_b
+                                                   stddev=1.0/math.sqrt(vocab_size)), name='W_w') # 乱数の設定を参照
+        self.W_b = tf.Variable(tf.zeros([vocab_size]), name='W_b')
+        self.prob_from_enc = tf.matmul(self.enc, self.W_w) + self.W_b
 
         ###   ###
         # p(y_i+1|x, y_c;theta)(V) ~ exp(Vh + Wenc(x, y_c))
@@ -78,38 +78,8 @@ class NNLMmodel(object):
         self.train_step = tf.train.AdamOptimizer(1e-4).minimize(self.cross_entropy)
         self.correct_prediction = tf.equal(tf.argmax(self.prob, 1), tf.argmax(self.t, 1))
         self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
-    
+
         
-class BOWmodel(NNLMmodel):
-        
-    def encoder(self):
-        batch_size = self.params.batch_size
-        vocab_size = self.params.vocab_size
-        hidden_size = self.params.hidden_size
-
-        self.F = tf.Variable(tf.random_uniform([vocab_size, hidden_size], -1.0, 1.0)) # 乱数の設定を参照
-        self.tilde_x = tf.cast(tf.nn.embedding_lookup(self.F, self.x), tf.float32)
-        #print(self.tilde_x.get_shape()) # (batch_size, None(x_length), hidden_size)
-        
-        self.p = tf.placeholder(tf.float32, shape=[batch_size, None]) # (batch_size, None(x_length))
-
-        for i in range(batch_size):
-            # print(tf.slice(self.p, [i, 0], [1, -1]).get_shape()) # (1, hidden_size)
-            # print(tf.slice(self.tilde_x, [i, 0, 0], [1, -1, -1]).get_shape()) # (1, None(x_length), hidden_size)
-            # print(tf.reshape(tf.slice(self.tilde_x, [i, 0, 0], [1, -1, -1]), [-1, hidden_size]).get_shape()) # (None(x_length), hidden_size)
-            temp = tf.matmul(tf.slice(self.p, [i, 0], [1, -1]), tf.reshape(tf.slice(self.tilde_x, [i, 0, 0], [1, -1, -1]), [-1, hidden_size])) 
-            # print(temp.get_shape()) # (1, hidden_size)
-            if i == 0:
-                self.enc = temp 
-            else:
-                self.enc = tf.concat(0, [self.enc, temp])
-
-        # print(self.enc.get_shape()) # (batch_size, hidden_size)
-    def train(self, session, x, p, y_c, t):
-        feed_dict = {self.x: x, self.p: p, self.y_c: y_c, self.t: t}
-        self.train_step.run(session=session, feed_dict=feed_dict)
-        return self.accuracy.eval(session=session, feed_dict=feed_dict)
-
 class ABSmodel(NNLMmodel):
                 
     def encoder(self):
@@ -121,41 +91,107 @@ class ABSmodel(NNLMmodel):
         hidden_size = self.params.hidden_size
         smoothing_window_size = self.params.smoothing_window_size
 
-        self.G = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0)) # 乱数の設定を参照
+        self.G = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0), name='G') # 乱数の設定を参照
         self.tilde_y_c_dash = tf.reshape(tf.nn.embedding_lookup(self.G, self.y_c), shape=[batch_size, window_size*embedding_size])
-        self.F = tf.Variable(tf.random_uniform([vocab_size, hidden_size], -1.0, 1.0)) # 乱数の設定を参照
+
+        self.F = tf.Variable(tf.random_uniform([vocab_size, hidden_size], -1.0, 1.0), name='F') # 乱数の設定を参照
         self.tilde_x = tf.cast(tf.nn.embedding_lookup(self.F, self.x), tf.float32)
+
         self.P = tf.Variable(tf.truncated_normal((window_size*embedding_size, hidden_size),
-                                                 stddev=1.0/math.sqrt(hidden_size))) # 乱数の設定を参照
+                                                 stddev=1.0/math.sqrt(hidden_size)), name='P') # 乱数の設定を参照
+
         self.p_ = tf.matmul(self.tilde_y_c_dash, self.P)
-        self.smoothed_x = tf.cast(tf.placeholder(tf.int32, shape=[batch_size, None, vocab_size]), tf.float32) / (2*smoothing_window_size+1)
-        # print(self.p_.get_shape()) # (batch_size, hidden_size)
-        # print(self.tilde_x.get_shape()) # (batch_size, None(hidden_size, hidden_size))
+
+        self.tilde_x = tf.transpose(self.tilde_x, [1, 0, 2]) # (?, batch_size, hidden_size)
+
+        initializer = [tf.reshape(tf.slice(self.tilde_x, [0, 0, 0], [1, -1, -1]), [batch_size, hidden_size])] * (smoothing_window_size+1) # 前window_size分は元のやつ、残り一つ分が欲しいやつ
+        x_bar_forward = tf.scan(lambda a, x: a[1: -1] + [x] + [sum(a[: -1] + [x])], elems=self.tilde_x, initializer=initializer)[-1]
         
-        for i in range(batch_size):
-            # print(tf.slice(self.p_, [i, 0], [1, -1]).get_shape()) # (1, hidden_size)
-            # print(tf.slice(self.tilde_x, [i, 0, 0], [1, -1, -1]).get_shape()) # (1, None(x_length), hidden_size)
-            # print(tf.reshape(tf.slice(self.tilde_x, [i, 0, 0], [1, -1, -1]), [-1, hidden_size]).get_shape()) # (None(x_length), hidden_size)
-            # print(tf.reshape(tf.slice(self.smoothed_x, [i, 0, 0], [1, -1, -1]), [-1, vocab_size]).get_shape()) # (None(x_length), vocab_size)
-            # print(self.F.get_shape()) # (vocab_size, hidden_size)
-            
-            p = tf.matmul(tf.slice(self.p_, [i, 0], [1, -1]), tf.transpose(tf.reshape(tf.slice(self.tilde_x, [i, 0, 0], [1, -1, -1]), [-1, hidden_size])))
-            x_bar = tf.matmul(tf.reshape(tf.slice(self.smoothed_x, [i, 0, 0], [1, -1, -1]), [-1, vocab_size]), self.F)
-            temp = tf.matmul(p, x_bar)
+        reverse_tilde_x = tf.reverse(self.tilde_x, [True, False, False]) # reverseの扱い注意
+        
+        initializer = [tf.reshape(tf.slice(reverse_tilde_x, [0, 0, 0], [1, -1, -1]), [batch_size, hidden_size])] * (smoothing_window_size+1)
+        x_bar_backward = tf.reverse(tf.scan(lambda a, x: a[1: -1] + [x] + [sum(a[: -1] + [x])], elems=reverse_tilde_x, initializer=initializer)[-1], [True, False, False])
 
-            # print(p.get_shape())
-            # print(x_bar.get_shape())
-            # print(temp.get_shape())
+        self.x_bar = tf.transpose((x_bar_forward + x_bar_backward - self.tilde_x), [1, 0, 2]) / (2*smoothing_window_size+1)
+        
+        self.tilde_x = tf.transpose(self.tilde_x, [1, 0, 2]) # x_barを計算した後
 
-            if i == 0:
-                self.enc = temp
-            else:
-                self.enc = tf.concat(0, [self.enc, temp])
+        self.enc = tf.squeeze(tf.scan(lambda a, x: tf.matmul(tf.exp(tf.matmul(tf.expand_dims(x[0], 0), x[1])), x[2]), #(1, ?) (?, hidden_size)
+                                      elems=(self.p_, tf.transpose(self.tilde_x, [0, 2, 1]), self.x_bar),
+                                      initializer=tf.zeros([1, hidden_size])), 1)
+
                 
-    def train(self, session, x, smoothed_x, y_c, t):
-        feed_dict = {self.x: x, self.smoothed_x: smoothed_x, self.y_c: y_c, self.t: t}
+    def train(self, session, x, y_c, t):
+        feed_dict = {self.x: x, self.y_c: y_c, self.t: t}
         self.train_step.run(session=session, feed_dict=feed_dict)
         return self.accuracy.eval(session=session, feed_dict=feed_dict)
+
+    
+    def rebuild_forward_graph(self, sess, model_path):
+
+        window_size = self.params.window_size
+        vocab_size = self.params.vocab_size
+        embedding_size = self.params.embedding_size
+        hidden_size = self.params.hidden_size
+        smoothing_window_size = self.params.smoothing_window_size
+        
+        self.E = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0), name='E')
+        self.U_w = tf.Variable(tf.truncated_normal((window_size*embedding_size, hidden_size),
+                                                   stddev=1.0/math.sqrt(hidden_size)), name='U_w')
+        self.U_b = tf.Variable(tf.zeros([hidden_size]), name='U_b')
+        self.V_w = tf.Variable(tf.truncated_normal((hidden_size, vocab_size),
+                                                   stddev=1.0/math.sqrt(vocab_size)), name='V_w')
+        self.V_b = tf.Variable(tf.zeros([vocab_size]), name='V_b')
+        self.W_w = tf.Variable(tf.truncated_normal((hidden_size, vocab_size),
+                                                   stddev=1.0/math.sqrt(vocab_size)), name='W_w')
+        self.W_b = tf.Variable(tf.zeros([vocab_size]), name='W_b')
+        self.G = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0), name='G')
+        self.F = tf.Variable(tf.random_uniform([vocab_size, hidden_size], -1.0, 1.0), name='F')
+        self.P = tf.Variable(tf.truncated_normal((window_size*embedding_size, hidden_size),
+                                                 stddev=1.0/math.sqrt(hidden_size)), name='P')
+
+        restore_vals = {'E': self.E,
+                        'U_w': self.U_w,
+                        'U_b': self.U_b,
+                        'V_w': self.V_w,
+                        'V_b': self.V_b,
+                        'W_w': self.W_w,
+                        'W_b': self.W_b,
+                        'G': self.G,
+                        'F': self.F,
+                        'P': self.P}
+        
+        saver = tf.train.Saver(restore_vals)
+        saver.restore(sess, model_path)
+
+        self.y_c = tf.placeholder(tf.int32, shape=[window_size]) 
+        self.tilde_y_c = tf.reshape(tf.nn.embedding_lookup(self.E, self.y_c), shape=[window_size*embedding_size])
+        
+        self.h = tf.nn.tanh(tf.matmul(tf.expand_dims(self.tilde_y_c, 0), self.U_w) + self.U_b)
+        
+        self.prob_from_h = tf.matmul(self.h, self.V_w) + self.V_b
+        
+        ### encoder ###
+        
+        self.x = tf.placeholder(tf.int32, shape=[None])
+
+        self.tilde_y_c_dash = tf.reshape(tf.nn.embedding_lookup(self.G, self.y_c), shape=[window_size*embedding_size])
+        self.tilde_x = tf.cast(tf.nn.embedding_lookup(self.F, self.x), tf.float32)
+        
+        self.p_ = tf.matmul(tf.expand_dims(self.tilde_y_c_dash, 0), self.P)
+        
+        
+        
+        
+        self.prob_from_enc = tf.matmul(self.enc, self.W_w) + self.W_b
+        
+        self.prob = tf.nn.softmax(self.prob_from_h + self.prob_from_enc)
+        self.t = tf.cast(tf.placeholder(tf.int32, shape=[vocab_size]), tf.float32)
+        self.correct_prediction = tf.equal(tf.argmax(self.prob, 1), tf.argmax(self.t, 1))
+        self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
+        
+    
+
         
 if __name__ == '__main__':
 
