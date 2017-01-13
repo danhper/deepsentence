@@ -47,9 +47,11 @@ if args.gpu:
 else:
     model = ABSmodel(config.params)
     model.build_train_graph()
-        
+
+tf.set_random_seed(0)
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
+# sess.run(tf.inittialize_all_variables()) # for lower tf version
 save_vals = {'E': model.E,
              'U_w': model.U_w,
              'U_b': model.U_b,
@@ -61,8 +63,6 @@ save_vals = {'E': model.E,
              'F': model.F,
              'P': model.P}
 saver = tf.train.Saver(save_vals)
-
-# help(saver.save)
 
 for i in range(config.params.epoch):
     print('epoch: %d'%(i+1))
