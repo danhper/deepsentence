@@ -45,9 +45,9 @@ def query_sources(session, offset=0, count=False, limit=BATCH_SIZE):
 def fetch_batch(runner, session_maker, offset=0):
     with db.session_scope(session_maker) as session:
         original_count = query_sources(session, count=True)
-        if original_count == 0:
-            clean_exit()
-        sources = query_sources(session)
+        sources = query_sources(session, offset=offset)
+        if not sources:
+            return
         urls_metadata = create_metadata(sources)
 
     yield runner.crawl('source_content', urls_metadata=urls_metadata)
@@ -58,7 +58,8 @@ def fetch_batch(runner, session_maker, offset=0):
     logging.info('batch finished. articles without content: original=%d, new=%d',
                  original_count, new_count)
     if new_count < original_count:
-        fetch_batch(runner, session_maker, offset=0)
+        offset_delta = BATCH_SIZE - (original_count - new_count)
+        fetch_batch(runner, session_maker, offset=offset + offset_delta)
     else:
         fetch_batch(runner, session_maker, offset=offset + BATCH_SIZE)
 
@@ -70,6 +71,7 @@ def main():
     session_maker = db.create_session_maker()
     fetch_batch(runner, session_maker)
     runner.start()
+    clean_exit()
 
 
 if __name__ == '__main__':
