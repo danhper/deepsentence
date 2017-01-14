@@ -78,4 +78,4 @@ postgres://deep_sentence:PASSWORD@public-db.claudetech.com:5433/deep_sentence
 
 ## Deployment
 
-See (./deployment/README.md) for more information about how to setup a node.
+See [deployment/README.md](./deployment/README.md) for more information about how to setup a node.
