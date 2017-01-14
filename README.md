@@ -49,6 +49,15 @@ if you want a shell to play around with the responses, run
 scrapy shell ARTICLE_URL --spider=line_news
 ```
 
+## Learning
+
+### Dependencies
+
+To learn, you will first need to download the word embeddings for word2vec.
+You can get them at the following URL: http://www.cl.ecei.tohoku.ac.jp/~m-suzuki/jawiki_vector/entity_vector.tar.bz2
+
+Or you can use `make download_models` to download them for you.
+
 ## Development
 
 ### Adding dependencies

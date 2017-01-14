@@ -6,3 +6,5 @@ dist/
 build/
 tmp/*
 !tmp/.keep
+/models/*
+!/models/.keep

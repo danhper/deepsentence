@@ -17,3 +17,6 @@ init_db:
 	@./bin/manage_db version_control
 
 setup_db: init_db migrate populate_db
+
+download_models:
+	@./bin/download_models
