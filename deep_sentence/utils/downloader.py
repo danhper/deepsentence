@@ -1,7 +1,8 @@
-import wget
-import tarfile
 import os
 from os import path
+
+import tarfile
+import wget
 
 from deep_sentence import settings
 
