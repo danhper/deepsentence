@@ -3,13 +3,18 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
+
+const suffix = process.env.NODE_ENV === 'production' ? '[hash].' : '';
 
 module.exports = {
   context: __dirname,
-  entry: './frontend',
+  entry: {
+    app: './frontend'
+  },
   output: {
     path: path.join(__dirname, 'static'),
-    filename: 'app.js'
+    filename: `app.${suffix}js`
   },
   module: {
     preLoaders: [
@@ -20,5 +25,8 @@ module.exports = {
       { test: /\.less$/, loader: ExtractTextPlugin.extract('style-loader', 'css!less') }
     ]
   },
-  plugins: [new ExtractTextPlugin('app.css')]
+  plugins: [
+    new ExtractTextPlugin(`app.${suffix}css`),
+    new ManifestPlugin()
+  ]
 };

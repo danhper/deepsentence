@@ -17,11 +17,9 @@ python_dependencies:
 	@$(PIP) install -r requirements.txt
 
 compile_web:
-	@cd deep_sentence/webapp && ./node_modules/.bin/webpack -p
+	@cd deep_sentence/webapp && NODE_ENV=production ./node_modules/.bin/webpack -p
 
 webapp_setup: npm_dependencies compile_web
-	@$(PYTHON) -c "import nltk; nltk.download('punkt')"
-
 
 prepare: python_dependencies
 	@$(PYTHON) setup.py develop

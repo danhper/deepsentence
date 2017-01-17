@@ -31,7 +31,8 @@
     "riotjs-loader": "^3.0.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.14.0",
-    "webpack-livereload-plugin": "^0.10.0"
+    "webpack-livereload-plugin": "^0.10.0",
+    "webpack-manifest-plugin": "^1.1.0"
   },
   "dependencies": {
     "query-string": "^4.3.1"

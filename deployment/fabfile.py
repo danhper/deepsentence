@@ -28,3 +28,5 @@ def deploy():
 
         if files.exists('tmp/webapp.pid'):
             run("kill -HUP $(cat tmp/webapp.pid)")
+
+        run("make webapp_setup")
