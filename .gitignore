@@ -8,3 +8,5 @@ tmp/*
 !tmp/.keep
 /models/*
 !/models/.keep
+
+deep_sentence/webapp/static

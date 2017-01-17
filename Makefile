@@ -20,3 +20,6 @@ setup_db: init_db migrate populate_db
 
 download_models:
 	@./bin/download_models
+
+dev_webapp:
+	foreman start --procfile deep_sentence/webapp/Procfile
