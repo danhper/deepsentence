@@ -1,0 +1,23 @@
+{% extends "application.html" %}
+
+{% block content %}
+<h1 class="text-center">Team</h1>
+
+<div class="row members">
+  {% for member in members %}
+    {% include "member.html" %}
+  {% endfor %}
+</div>
+
+<h1 class="text-center">References</h1>
+<dl>
+  <dt>A Neural Attention Model for Sentence Summarization</dt>
+  <dd><a href="https://www.aclweb.org/anthology/D/D15/D15-1044.pdf">https://www.aclweb.org/anthology/D/D15/D15-1044.pdf</a></dd>
+
+  <dt>Abstractive Text Summarization using Sequence-to-sequence RNNs and Beyond</dt>
+  <dd><a href="https://arxiv.org/pdf/1602.06023v2.pdf">https://arxiv.org/pdf/1602.06023v2.pdf</a></dd>
+
+  <dt>Neural Summarization by Extracting Sentences and Words</dt>
+  <dd><a href="https://arxiv.org/pdf/1603.07252v3.pdf">https://arxiv.org/pdf/1603.07252v3.pdf</a></dd>
+</dl>
+{% endblock %}

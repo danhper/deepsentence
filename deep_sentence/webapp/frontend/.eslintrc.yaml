@@ -1,0 +1,9 @@
+env:
+  browser: true
+
+parserOptions:
+  sourceType: module
+
+globals:
+  $: true
+  riot: true

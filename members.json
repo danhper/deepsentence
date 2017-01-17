@@ -1,0 +1,40 @@
+[
+  {
+    "name": "Daniel Perez",
+    "image_url": "http://www.gravatar.com/avatar/b52dbf7579a057eaa3a4b7dae69f4f4b?size=250",
+    "department": "Creative Informatics",
+    "bio": "",
+    "specialities": ["Programming languages", "Program analysis"],
+    "links": [
+      {"title": "Blog", "url": "http://tuvistavie.com", "icon": "fa fa-rss"},
+      {"title": "GitHub", "url": "https://github.com/tuvistavie", "icon": "fa fa-github"}
+    ]
+  },
+
+  {
+    "name": "Norisada Masui",
+    "image_url": "http://www.gravatar.com/avatar/6e9a40855b48590fca734020e677676e?size=250",
+    "department": "Systems Innovation",
+    "bio": "",
+    "specialities": ["Text mining (topic model)", "InfoVis", "Communication"],
+    "links": []
+  },
+
+  {
+    "name": "Lee Seungho",
+    "image_url": "http://www.gravatar.com/avatar/3bb1c9dd3a2148110071c28a25074ce9?size=250",
+    "department": "Electrical Engineering",
+    "bio": "",
+    "specialities": ["Data mining", "Solar Panel defect detection"],
+    "links": []
+  },
+
+  {
+    "name": "Daigo Tashiro",
+    "image_url": "http://www.gravatar.com/avatar/9e10d1e4d5557018b18f6d99a88c9b82?size=250",
+    "department": "Systems Innovation",
+    "bio": "",
+    "specialities": ["Finance data mining", "OrderBook"],
+    "links": []
+  }
+]

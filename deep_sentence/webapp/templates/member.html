@@ -1,0 +1,29 @@
+<div class="card team-member">
+  <img class="card-img-top" src="{{ member.image_url }}" alt="Card image cap">
+  <div class="card-block">
+    <h4 class="card-title">{{ member.name }}</h4>
+    <h6 class="card-subtitle mb-2 text-muted">{{ member.department }}</h6>
+    {% if member.bio %}
+      <p class="card-text">{{ member.bio }}</p>
+    {% endif %}
+  </div>
+
+  {% if member.specialities %}
+    <ul class="list-group list-group-flush">
+      {% for speciality in member.specialities %}
+        <li class="list-group-item">{{ speciality }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if member.links %}
+    <div class="card-block">
+      {% for link in member.links %}
+        <a href="{{ link.url }}" class="card-link">
+          {% if link.icon %}<i class="{{ link.icon }}"></i>{% endif %}
+          {{ link.title }}
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

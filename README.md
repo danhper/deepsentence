@@ -58,7 +58,24 @@ You can get them at the following URL: http://www.cl.ecei.tohoku.ac.jp/~m-suzuki
 
 Or you can use `make download_models` to download them for you.
 
-## Development
+## Webapp
+
+The web application lives in `deep_sentence/webapp`.
+
+### Requirements
+
+* NodeJS >= 4
+* [yarn](https://yarnpkg.com/) (recommended)
+* [foreman](https://github.com/ddollar/foreman) (recommended)
+
+### Usage
+
+To install dependencies, run `make prepare_web`.
+You can then start the application by running `make dev_webapp`. If you do not
+have foreman, you can start the app with `make debug_app` and start webpack
+(in another shell) with `make webpack_watch`.
+
+## Guidelines
 
 ### Adding dependencies
 
