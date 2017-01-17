@@ -1,4 +1,5 @@
 require('./url-input.tag');
+
 import queryString from 'query-string';
 
 <url-inputs>
@@ -14,8 +15,11 @@ import queryString from 'query-string';
   <script>
     this.urls = [{ value: '' }];
 
-    const queryUrls = queryString.parse(location.search)['urls[]'];
+    let queryUrls = queryString.parse(location.search)['urls[]'];
     if (queryUrls) {
+      if (!(queryUrls instanceof Array)) {
+        queryUrls = [queryUrls];
+      }
       this.urls = queryUrls.map(url => { return { value: url } });
     }
 

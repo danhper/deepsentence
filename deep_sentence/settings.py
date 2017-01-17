@@ -26,6 +26,7 @@ HTML_EXTRACTOR_CREDENTIALS = (
     os.environ.get('HTML_EXTRACTOR_PASSWORD', ''),
 )
 
+DEFAULT_LANGUAGE = 'japanese'
 
 FIXTURES_PATH = path.join(PROJECT_ROOT, 'deep_sentence', 'fixtures')
 

@@ -3,7 +3,7 @@ from os import path
 
 from flask import Flask, render_template, request
 
-from deep_sentence import settings
+from deep_sentence import settings, summarizer
 
 app = Flask(__name__)
 
@@ -17,8 +17,7 @@ def index():
     if urls:
         app.logger.info(urls)
         try:
-            # summary = summarizer.summarize_urls(urls)
-            pass
+            summary = summarizer.summarize_urls(urls)
         except BaseException as e:
             error = str(e)
     return render_template('index.html', summary=summary, error=error)

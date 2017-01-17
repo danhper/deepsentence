@@ -1,10 +1,14 @@
 all: prepare
 
+setup: python_dependencies
+
 write_dependencies:
 	@pip freeze | grep -v deep_sentence > requirements.txt
 
-prepare:
+python_dependencies:
 	@pip install -r requirements.txt
+
+prepare: python_dependencies
 	@python setup.py develop
 
 migrate:
