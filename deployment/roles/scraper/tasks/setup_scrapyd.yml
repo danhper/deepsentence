@@ -25,9 +25,13 @@
   template: src=scrapyd.conf dest=/etc/supervisor/conf.d/scrapyd.conf
   register: scrapyd_config
 
+- name: Add supervisor fetch sources
+  template: src=fetch_sources.conf dest=/etc/supervisor/conf.d/fetch_sources.conf
+  register: fetch_sources_config
+
 - name: Restart supervisor
   service: name=supervisor state=restarted
-  when: scrapyd_config | changed
+  when: scrapyd_config | changed or fetch_sources_config | changed
 
 - name: Start scrapyd
   supervisorctl: name=scrapyd state=started

@@ -1,0 +1,20 @@
+---
+
+- name: Install https transport
+  apt: name=apt-transport-https
+
+# XXX: issues with ca-certificates on debian
+- name: Add apt key for nodesource
+  apt_key: url={{ nodejs_key_url }}
+
+- name: Add repo for nodesource
+  apt_repository: repo={{ item }} update_cache=yes
+  with_items:
+    - "deb {{ nodejs_deb_url }} {{ ansible_distribution_release }} main"
+    - "deb-src {{ nodejs_deb_url }} {{ ansible_distribution_release }} main"
+
+- name: Install NodeJS
+  apt: name=nodejs
+
+- name: Update npm
+  npm: name=npm state=latest global=yes

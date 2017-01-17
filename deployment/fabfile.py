@@ -1,4 +1,5 @@
 from fabric.api import env, run, cd
+from fabric.contrib import files
 
 
 env.user = 'deep_sentence'
@@ -24,3 +25,6 @@ def deploy():
         # scrapyd only supports python2
         run("python2 setup.py install --user")
         run("scrapyd-deploy")
+
+        if files.exists('tmp/webapp.pid'):
+            run("kill -HUP $(cat tmp/webapp.pid)")

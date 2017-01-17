@@ -1,5 +1,9 @@
 [tag_Name_scraper]
 scraper.internal.deepsentence.com
 
+[tag_Name_webapp]
+scraper.internal.deepsentence.com
+
 [production:children]
 tag_Name_scraper
+tag_Name_webapp

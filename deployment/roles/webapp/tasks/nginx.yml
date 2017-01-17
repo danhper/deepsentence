@@ -1,0 +1,22 @@
+---
+
+- name: Install nginx
+  apt: name=nginx
+
+- name: Start and enable nginx
+  service: name=nginx state=started enabled=yes
+
+- name: Remove default nginx server
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  register: nginx_default_removed
+
+- name: Add deep_sentence nginx config
+  template: src=deepsentence.com dest=/etc/nginx/sites-available/deepsentence.com
+  register: nginx_config
+
+- name: Activate deep_sentence nginx config
+  file: src=/etc/nginx/sites-available/deepsentence.com dest=/etc/nginx/sites-enabled/deepsentence.com state=link
+
+- name: Reload nginx config
+  service: name=nginx state=reloaded
+  when: nginx_config | changed or nginx_default_removed | changed

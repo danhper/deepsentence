@@ -12,6 +12,16 @@
   roles:
     - { role: python, python_version: 3.5.2 }
     - { role: python, python_version: 2.7.12 }
+    - app
     - scraper
     - { role: williamyeh.oracle-java, java_version: 8 }
     - html_extractor
+
+- name: setup webapp
+  hosts: tag_Name_webapp
+
+  roles:
+    - { role: python, python_version: 3.5.2 }
+    - nodejs
+    - app
+    - webapp

@@ -1,0 +1,4 @@
+---
+
+app_repository: git@github.com:tuvistavie/ail-nlp.git
+app_project_dir: "{{ user_home }}/deep_sentence"

@@ -1,0 +1,34 @@
+---
+
+- name: Install supervisor
+  apt: name=supervisor
+
+- name: Enable supervisor
+  service: name=supervisor enabled=yes state=started
+
+# remove next 2 tasks when https://github.com/ansible/ansible-modules-core/issues/3764 is fixed
+- name: Check for systemctl
+  changed_when: no
+  command: which systemctl
+  register: which_systemctl
+  ignore_errors: yes
+
+- name: Enable supervisor with systemd
+  command: systemctl enable supervisor
+  when: which_systemctl | succeeded
+  changed_when: no
+
+- name: Add webapp config
+  template: src=webapp.conf dest=/etc/supervisor/conf.d/webapp.conf
+  register: webapp_config
+
+- name: Restart supervisor
+  service: name=supervisor state=restarted
+  when: webapp_config | changed
+
+- name: Start webapp
+  supervisorctl: name=webapp state=started
+
+- name: Restart webapp
+  supervisorctl: name=webapp state=restarted
+  when: app_git_fetch | changed

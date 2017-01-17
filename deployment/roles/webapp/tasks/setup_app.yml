@@ -1,0 +1,9 @@
+---
+
+- name: Prepare project
+  command: make webapp_setup chdir={{ app_project_dir }}
+  become: yes
+  become_user: "{{ username }}"
+  when: app_git_fetch | changed
+  environment:
+    PYTHON: python3

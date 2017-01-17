@@ -1,0 +1,5 @@
+---
+
+nodejs_major_version: "4"
+nodejs_key_url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+nodejs_deb_url: "https://deb.nodesource.com/node_{{ nodejs_major_version }}.x"

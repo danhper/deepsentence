@@ -3,7 +3,6 @@
 - name: Install needed packages
   apt: name={{ item }}
   with_items:
-    - libpq-dev
     - supervisor
 
 - name: Install scrapyd-client
