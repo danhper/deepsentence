@@ -25,7 +25,7 @@ try:
   tf.app.flags.DEFINE_float("learning_rate_decay_factor", 0.99, "Learning rate decays by this much.")
   tf.app.flags.DEFINE_float("max_gradient_norm", 5.0, "Clip gradients to this norm.")
   tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size to use during training.")
-  tf.app.flags.DEFINE_integer("size", 1024, "Size of each model layer.")
+  tf.app.flags.DEFINE_integer("size", 200, "Size of each model layer.")
   tf.app.flags.DEFINE_integer("num_layers", 1, "Number of layers in the model.")
   tf.app.flags.DEFINE_integer("vocab_size", 1005367, "Vocabulary size.")
   tf.app.flags.DEFINE_string("data_dir", "/tmp", "Data directory")
@@ -113,9 +113,6 @@ def train(source_ids, target_ids, dic, vec):
         eval_ppx = math.exp(float(eval_loss)) if eval_loss < 300 else float("inf")
         print("  eval: bucket %d perplexity %.2f" % (bucket_id, eval_ppx))
         sys.stdout.flush()
-
-
-
 
 
 def main(_):

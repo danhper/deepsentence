@@ -12,6 +12,14 @@ from sqlalchemy.orm import sessionmaker
 import MeCab
 
 
+CONSTS = {
+  "<PAD>" : 0,
+  "<GO>" : 1,
+  "<EOS>" : 2,
+  "<UNK>" : 3,
+}
+
+
 def create_engine():
     return sqlalchemy.create_engine(DATABASE_URL)
 
@@ -22,11 +30,11 @@ def create_session_maker():
 
 
 def load_embeddings():
-  dic = {}
-  vec = []
+  dic = {v:k for k, v in CONSTS.items()}
+  vec = [np.random.uniform(0., 1., 200) for _, _ in CONSTS.items()]
   with open(EMBEDDING_FILE) as f:
     reader = f.readlines()[1:]
-    for i, row in enumerate(reader):
+    for i, row in enumerate(reader, start=4):
       row = row.replace('\n','').split(' ')
       dic[i] = row[0] if not row[0].startswith('[') else row[0][1:-1]
       vec.append(np.array(row[1:],dtype=np.float32))
@@ -53,8 +61,8 @@ def make_dataset():
     try:
       return word2id[x]
     except KeyError:
-      return "@"
+      return CONSTS["<UNK>"]
 
   source_ids = [[func(x)for x in source] for source in sources]
-  target_ids = [[func(x)for x in target]+['EOS'] for target in targets]
+  target_ids = [[func(x)for x in target]+[CONSTS["<EOS>"]] for target in targets]
   return source_ids, target_ids, dic, vec

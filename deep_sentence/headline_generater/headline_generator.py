@@ -9,16 +9,13 @@ from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 from tensorflow.python.framework import ops
 
-PAD_ID = 0
-GO_ID = 0
-EOS_ID = 2
-UNK_ID = 3
+from util import CONSTS
 
 class HeadlineGenerator:
 
   def __init__(self, vocab_size, size, max_gradient_norm,
         batch_size, learning_rate, learning_rate_decay_factor, num_layers=1,
-        use_lstm=True, num_samples=2048, forward_only=False, dtype=tf.float32):
+        use_lstm=True, num_samples=1024, forward_only=False, dtype=tf.float32):
 
     self.encoder_size = 300
     self.decoder_size = 30
@@ -86,17 +83,11 @@ class HeadlineGenerator:
     targets = [self.decoder_inputs[i + 1] for i in xrange(len(self.decoder_inputs) - 1)]
 
     # Training outputs and losses.
+    all_inputs = self.encoder_inputs + self.decoder_inputs + targets + self.target_weights
     if forward_only:
-      self.output, _ = seq2seq_f(self.encoder_inputs, self.decoder_inputs, True)
-      per_example_loss=False
-      if per_example_loss:
-        self.loss = tf.nn.seq2seq.sequence_loss_by_example(
-              self.output[:MAX_DECODER_INPUTS_SIZE],
-              targets,
-              self.target_weights[:MAX_DECODER_INPUTS_SIZE],
-              softmax_loss_function=softmax_loss_function)
-      else:
-        loss = tf.nn.seq2seq.sequence_loss(
+      with ops.name_scope(None, "model", all_inputs):
+        self.output, _ = seq2seq_f(self.encoder_inputs, self.decoder_inputs, True)
+        self.loss = tf.nn.seq2seq.sequence_loss(
               self.output[:MAX_DECODER_INPUTS_SIZE],
               targets,
               self.target_weights[:MAX_DECODER_INPUTS_SIZE],
@@ -104,19 +95,11 @@ class HeadlineGenerator:
 
       # If we use output projection, we need to project outputs for decoding.
       if output_projection is not None:
-          self.output = [tf.matmul(output, output_projection[0]) + output_projection[1]
-              for output in self.output]
+          self.output = [tf.matmul(o, output_projection[0]) + output_projection[1] for o in self.output]
     else:
-      self.output, _ = seq2seq_f(self.encoder_inputs, self.decoder_inputs, True)
-      per_example_loss=False
-      if per_example_loss:
-        self.loss = tf.nn.seq2seq.sequence_loss_by_example(
-              self.output[:MAX_DECODER_INPUTS_SIZE],
-              targets,
-              self.target_weights[:MAX_DECODER_INPUTS_SIZE],
-              softmax_loss_function=softmax_loss_function)
-      else:
-        loss = tf.nn.seq2seq.sequence_loss(
+      with ops.name_scope(None, "model", all_inputs):
+        self.output, _ = seq2seq_f(self.encoder_inputs, self.decoder_inputs, True)
+        self.loss = tf.nn.seq2seq.sequence_loss(
               self.output[:MAX_DECODER_INPUTS_SIZE],
               targets,
               self.target_weights[:MAX_DECODER_INPUTS_SIZE],
@@ -155,12 +138,12 @@ class HeadlineGenerator:
       encoder_input, decoder_input = random.choice(data)
 
       # Encoder inputs are padded and then reversed.
-      encoder_pad = [PAD_ID] * (self.encoder_size - len(encoder_input))
+      encoder_pad = [CONSTS["<PAD>"]] * (self.encoder_size - len(encoder_input))
       encoder_inputs.append(list(reversed(encoder_input + encoder_pad)))
 
       # Decoder inputs get an extra "GO" symbol, and are padded then.
       decoder_pad_size = self.decoder_size - len(decoder_input) - 1
-      decoder_inputs.append([GO_ID] + decoder_input + [PAD_ID] * decoder_pad_size)
+      decoder_inputs.append([CONSTS["<GO>"]] + decoder_input + [CONSTS["<PAD>"]] * decoder_pad_size)
 
     # Now we create batch-major vectors from the data selected above.
     batch_encoder_inputs, batch_decoder_inputs, batch_weights = [], [], []
@@ -182,7 +165,7 @@ class HeadlineGenerator:
         # The corresponding target is decoder_input shifted by 1 forward.
         if length_idx < decoder_size - 1:
           target = decoder_inputs[batch_idx][length_idx + 1]
-        if length_idx == decoder_size - 1 or target == PAD_ID:
+        if length_idx == decoder_size - 1 or target == CONSTS["<PAD>"]:
           batch_weight[batch_idx] = 0.0
       batch_weights.append(batch_weight)
     return batch_encoder_inputs, batch_decoder_inputs, batch_weights
