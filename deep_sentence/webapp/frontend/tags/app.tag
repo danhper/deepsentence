@@ -34,7 +34,7 @@ import axios from 'axios';
     </div>
   </form>
 
-  <div if={ loading } class="text-center">
+  <div if={ loading && checkList } class="text-center">
     <ul class="list-group checklist">
       <checklist-item item-id={ 0 } progress={ progress } text="Fetch articles" />
       <checklist-item item-id={ 1 } progress={ progress } text="Summarize articles" />
@@ -53,10 +53,12 @@ import axios from 'axios';
   <script>
     route.base('/');
 
+    this.checkList = false;
+
     const clientId = Math.random().toString(36).substring(7);
     axios.defaults.headers.common['x-client-id'] = clientId;
 
-    const socket = io.connect({transports: ['polling']});
+    const socket = io.connect();
     socket.on('connect', () => {
       socket.emit('subscribe', {room: clientId});
     });
