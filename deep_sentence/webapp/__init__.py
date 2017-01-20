@@ -34,7 +34,7 @@ def index():
         try:
             title, summary = summarizer.summarize_urls(urls)
         except BaseException as e:
-            logger.error(e)
+            logger.exception(e)
             error = str(e)
     return render_template('index.html', title=title, summary=summary, error=error)
 
