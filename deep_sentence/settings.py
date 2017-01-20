@@ -34,6 +34,10 @@ FIXTURES_PATH = path.join(PROJECT_ROOT, 'deep_sentence', 'fixtures')
 
 WORD_EMBEDDINGS_URL = 'http://www.cl.ecei.tohoku.ac.jp/~m-suzuki/jawiki_vector/entity_vector.tar.bz2'
 
+ABSTRACTIVE_DATA_URL = 'https://dl.dropboxusercontent.com/s/2b1o9eh82t92ieo/abstractive-data.tar.gz'
+ABSTRACTIVE_TRAINED_URL = 'https://dl.dropboxusercontent.com/s/9cfs3ifmfrvbhvc/abtractive-trained.tar.gz'
+
+
 MODELS_PATH = os.environ.get('MODELS_PATH', path.join(PROJECT_ROOT, 'models'))
 
 GPU_NUMBER = None
