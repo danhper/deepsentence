@@ -4,6 +4,6 @@ class params(object):
      embedding_size = 200
      window_size = 3
      hidden_size = 400
-     epoch = 100
+     epoch = 1000
      smoothing_window_size = window_size
      variable_init = 0.1

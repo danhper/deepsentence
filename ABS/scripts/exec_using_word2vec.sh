@@ -31,16 +31,21 @@ mkdir -p ${DICTIONARY_DIR}
 # 		   --save_dir ${DATASET_DIR}  
 # fi
 
+W2V_PATH='../data/entity_vector/entity_vector.model.bin'
 
-MODEL_DIR='../result/models'
-mkdir -p ${MODEL_DIR}
+# MODEL_DIR='../result_using_word2vec/models'
+# mkdir -p ${MODEL_DIR}
 
 export CUDA_VISIBLE_DEVICES='1'
-python pyscripts/train_ABS.py \
-	   --batch_path ${DATASET_DIR}/batch.pkl \
-	   --dictionary_path ${DATASET_DIR}/dictionary.pkl \
-	   --save_dir ${MODEL_DIR}
+# python pyscripts/train_ABS_using_word2vec.py \
+# 	   --batch_path ${DATASET_DIR}/batch.pkl \
+# 	   --w2v_path ${W2V_PATH} \
+# 	   --dictionary_path ${DATASET_DIR}/dictionary.pkl \
+# 	   --save_dir ${MODEL_DIR}
 
-# python pyscripts/decoder_ABS.py \
-# 	   --dataset_path ${REUTERS_DATASET_DIR}/test.pkl \
-# 	   --model_dir ${MODEL_DIR} 
+MODEL_PLUS_DIR='../result_plus_using_word2vec/models'
+python pyscripts/train_ABS_plus_using_word2vec.py \
+	   --batch_path ${DATASET_DIR}/batch.pkl \
+	   --w2v_path ${W2V_PATH} \
+	   --dictionary_path ${DATASET_DIR}/dictionary.pkl \
+	   --save_dir ${MODEL_PLUS_DIR}

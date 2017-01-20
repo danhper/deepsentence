@@ -19,8 +19,11 @@ data/scripts/debug/connect_db.sh
 paper
 data/scripts/debug
 
+data
 ABS/result/
 ABS/scripts_variable_length.bk
 ABS/data/
 ABS/scripts/debug/
 data/scripts/debug/
+data/raw_data/
+ABS/raw_data

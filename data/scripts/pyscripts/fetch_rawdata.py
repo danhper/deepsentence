@@ -26,12 +26,14 @@ class fetch():
         print(fields)
 
     def get_articles(self, n_rows=None):
+        print('getting articles...')
         # filed: 'id', 'remote_id', 'title', 'url', 'service_id', 'category_id', 'content', 'posted_at', 'sources_count'
         colnames = ['id', 'title', 'category_id', 'content'] 
         self.select(', '.join(colnames), 'articles', n_rows)
         self.articles = pd.DataFrame(self.cursor.fetchall(), columns=colnames)
 
     def get_sources(self, n_rows=None):
+        print('getting sources...')
         # filed: 'id', 'url', 'title', 'article_id', 'content', 'posted_at', 'media_id'
         colnames = ['id', 'title', 'article_id', 'content']
         self.select(', '.join(colnames), 'sources', n_rows)
@@ -44,6 +46,7 @@ class fetch():
         self.categories = pd.DataFrame(self.cursor.fetchall(), columns=colnames)
 
     def locate_sources(self):
+        print('arranging...')
         self.correspondence = self.articles.copy()
         n_col_articles = self.articles.shape[1]
         for i, article_id in enumerate(self.sources['article_id']):
@@ -76,10 +79,12 @@ if __name__ == '__main__':
         pw = getpass('database password: ')
 
     F = fetch(pw)
-    F.get_articles(args.n_rows)
+    # F.get_articles(args.n_rows)
     F.get_sources(args.n_rows)
-    F.locate_sources()
+    F.sources.to_pickle(args.output_path)
     
-    F.correspondence.to_pickle(args.output_path)
+    #F.locate_sources()
+    
+    #F.correspondence.to_pickle(args.output_path)
     
    
