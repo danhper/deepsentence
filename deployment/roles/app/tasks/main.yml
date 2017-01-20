@@ -4,6 +4,14 @@
   apt: name={{ item }}
   with_items:
     - libpq-dev
+    - autoconf
+    - automake
+
+- name: Install gunicorn
+  pip: name=gunicorn executable=pip3
+
+- name: Install mecab
+  include: install_mecab.yml
 
 - name: Fetch project
   git: repo={{ app_repository }} accept_hostkey=yes dest={{ app_project_dir }}
@@ -25,6 +33,9 @@
 
 - name: Add env file
   template: src=env dest={{ app_project_dir }}/.env owner={{ username }} group={{ username }}
+
+- name: Add google api key
+  template: src=google-api.json dest={{ app_project_dir }}/google-api.json owner={{ username }} group={{ username }}
 
 - name: Install project with python 2
   command: python setup.py install --user chdir={{ app_project_dir }}

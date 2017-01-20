@@ -2,3 +2,12 @@
 
 app_repository: git@github.com:tuvistavie/ail-nlp.git
 app_project_dir: "{{ user_home }}/deep_sentence"
+
+
+mecab_version: "0.996"
+mecab_ipadic_version: "2.7.0-20070801"
+mecab_url: https://dl.dropboxusercontent.com/s/rtcwjycn5nqac21/mecab-{{ mecab_version }}.tar.gz
+mecab_ipadic_url: https://dl.dropboxusercontent.com/s/6ejbssvivk7iaxp/mecab-ipadic-{{ mecab_ipadic_version }}.tar.gz
+
+mecab_build_path: "/tmp/mecab-{{ mecab_version }}"
+mecab_ipadic_build_path: "/tmp/mecab-ipadic-{{ mecab_ipadic_version }}"

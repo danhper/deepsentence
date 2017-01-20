@@ -41,8 +41,11 @@
   command: /usr/local/bin/python-build {{ python_version }} {{ python_prefix_path }}
   when: not python_installed
 
+- name: Ensure pip script exists
+  template: src=pip dest=/usr/local/bin/pip{{ python_version[0] }} mode=0755
+
 - name: Upgrade pip
-  pip: name=pip state=latest
+  pip: name=pip state=latest executable=pip{{ python_version[0] }}
 
 - name: Set Python info
   set_fact: { "python{{ python_version[0] }}_installed": True }

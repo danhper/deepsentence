@@ -1,0 +1,35 @@
+---
+
+- name: Check if mecab is installed
+  command: ls /usr/local/bin/mecab
+  ignore_errors: yes
+  changed_when: no
+  register: check_mecab
+
+- name: Download and extract mecab
+  unarchive: src={{ mecab_url }} dest=/tmp remote_src=yes
+  when: check_mecab | failed
+
+- name: Install mecab
+  shell: ./configure && make && make install && ldconfig /usr/local/lib chdir={{ mecab_build_path }}
+  when: check_mecab | failed
+
+- name: Clean mecab
+  file: path={{ mecab_build_path }} state=absent
+
+- name: Check if mecab-ipadic is installed
+  command: ls /usr/local/lib/mecab/dic/ipadic/matrix.bin
+  ignore_errors: yes
+  changed_when: no
+  register: check_mecab_ipadic
+
+- name: Download and extract mecab-ipadic
+  unarchive: src={{ mecab_ipadic_url }} dest=/tmp remote_src=yes
+  when: check_mecab_ipadic | failed
+
+- name: Install mecab-ipadic
+  shell: ./configure && make && make install chdir={{ mecab_ipadic_build_path }}
+  when: check_mecab_ipadic | failed
+
+- name: Clean mecab-ipadic
+  file: path={{ mecab_ipadic_build_path }} state=absent

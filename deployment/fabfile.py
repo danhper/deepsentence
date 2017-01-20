@@ -1,9 +1,9 @@
-from fabric.api import env, run, cd
+from fabric.api import env, run, cd, shell_env
 from fabric.contrib import files
 
 
 env.user = 'deep_sentence'
-env.hosts = ['scraper.internal.deepsentence.com']
+env.hosts = ['internal.deepsentence.com']
 env.use_ssh_config = True
 
 CODE_DIR  = '/home/deep_sentence/deep_sentence'
@@ -30,3 +30,9 @@ def deploy():
             run("kill -HUP $(cat tmp/webapp.pid)")
 
         run("make webapp_setup")
+
+
+def download_models():
+    with cd(CODE_DIR):
+        with shell_env(PROJECT_ROOT=CODE_DIR):
+            run("make download_models")
