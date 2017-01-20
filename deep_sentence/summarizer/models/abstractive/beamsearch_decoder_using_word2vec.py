@@ -9,6 +9,7 @@ import tensorflow as tf
 
 from deep_sentence.logger import logger
 from deep_sentence import settings
+from deep_sentence.summarizer.utils import w2v
 
 from .models_no_embedding_layer import ABSmodel
 from . import dataset, config, id2vector
@@ -24,7 +25,6 @@ pd.set_option('display.width', 10000)
 model_path = path.join(settings.MODELS_PATH, 'abstractive/trained/model.ckpt')
 
 dataset_path = path.join(settings.MODELS_PATH, 'abstractive/data/train_head.csv')
-w2v_path = path.join(settings.MODELS_PATH, 'entity_vector/entity_vector.model.bin')
 
 dictionary_path = path.join(settings.MODELS_PATH, 'abstractive/data/dictionary.pkl')
 token2id = dataset.load_dictionary(dictionary_path)
@@ -38,9 +38,7 @@ logger.info('loading dataset...')
 dataset_content = dataset.str2list(dataset.load_dataset(dataset_path, 1, 100))
 
 logger.info('loading word2vec model...')
-w2v_model = Word2Vec.load_word2vec_format(w2v_path, binary=True)
-id_vec_dic = id2vector.make_id_vector_dic(w2v_model, id2token, vocab_size)
-del w2v_model
+id_vec_dic = id2vector.make_id_vector_dic(w2v.model, id2token, vocab_size)
 
 logger.info('setup graph')
 sess = tf.Session()

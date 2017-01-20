@@ -22,15 +22,19 @@
 
   <div class="form-group row">
     <div class="col-sm-12 text-center">
-      <button type="submit" class="btn btn-primary">Summarize</button>
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-list"></i>
+        Summarize
+      </button>
     </div>
   </div>
 </form>
 
 {% if summary %}
+  <hr class="separator">
   <div class="result">
-    <h2>Result</h2>
-    <textarea readonly rows="20" class="form-control no-resize">{{ summary }}</textarea>
+    <h2 class="text-center">{{ title }}</h2>
+    <p class="summary">{{ summary | japanese_html | safe }}</p>
   </div>
 {% endif %}
 {% endblock %}

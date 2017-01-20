@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SSH_URL="scraper.internal.deepsentence.com"
+SSH_URL="internal.deepsentence.com"
 BASE_URL="http://scraper.deepsentence.com"
 PROJECT="deep_sentence.scraper"
 SPIDER="line_news"
