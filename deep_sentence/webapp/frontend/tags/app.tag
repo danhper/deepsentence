@@ -56,7 +56,7 @@ import axios from 'axios';
     const clientId = Math.random().toString(36).substring(7);
     axios.defaults.headers.common['x-client-id'] = clientId;
 
-    const socket = io.connect();
+    const socket = io.connect({transports: ['polling']});
     socket.on('connect', () => {
       socket.emit('subscribe', {room: clientId});
     });

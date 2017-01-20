@@ -8,7 +8,10 @@
     - automake
 
 - name: Install gunicorn
-  pip: name=gunicorn executable=pip3
+  pip: name={{ item }} executable=pip3
+  with_items:
+    - gunicorn
+    - eventlet
 
 - name: Install mecab
   include: install_mecab.yml

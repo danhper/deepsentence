@@ -1,6 +1,5 @@
 upstream app {
-    # Path to puma SOCK file
-    server unix:{{ app_project_dir }}/tmp/gunicorn.sock fail_timeout=0;
+    server {{ bind_server }} fail_timeout=0;
 }
 
 server {
