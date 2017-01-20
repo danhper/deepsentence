@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 
-from deep_sentence.utils.downloader import download_embeddings
+from os import path
 
-download_embeddings()
+from deep_sentence.utils import downloader
+from deep_sentence import settings
+
+if not path.isfile(path.join(settings.MODELS_PATH, 'entity_vector/entity_vector.model.bin')):
+    downloader.download_embeddings()
+
+
+if not path.isfile(path.join(settings.MODELS_PATH, 'abstractive/data/dictionary.pkl')):
+    downloader.download_abstractive_data()
+
+
+if not path.isfile(path.join(settings.MODELS_PATH, 'abstractive/trained/model.ckpt')):
+    downloader.download_abstractive_trained()

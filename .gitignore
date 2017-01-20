@@ -8,6 +8,7 @@ tmp/*
 !tmp/.keep
 /models/*
 !/models/.keep
+!/models/abstractive/.keep
 
 deep_sentence/webapp/static
 
@@ -27,3 +28,6 @@ ABS/scripts/debug/
 data/scripts/debug/
 data/raw_data/
 ABS/raw_data
+
+budou-cache.shelve
+google-api.json
