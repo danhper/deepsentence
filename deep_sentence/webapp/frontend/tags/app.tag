@@ -92,8 +92,6 @@ import axios from 'axios';
       });
     };
 
-    route.start(true);
-
     this.processQueryUrls();
   </script>
 </app>
