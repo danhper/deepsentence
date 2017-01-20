@@ -11,6 +11,8 @@ def try_load_dotenv():
         load_dotenv(dot_env_path)
 
 
+APP_NAME = 'deep_sentence'
+ENV = os.environ.get('DEEP_SENTENCE_ENV', 'dev')
 PROJECT_ROOT = os.environ.get('PROJECT_ROOT',
                               path.dirname(path.dirname(inspect.getfile(inspect.currentframe()))))
 
