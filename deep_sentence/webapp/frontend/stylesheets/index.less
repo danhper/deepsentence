@@ -2,6 +2,23 @@
   margin: 2em 0;
 }
 
+.checklist {
+  display: inline-block;
+  font-size: 0.8em;
+
+  .list-group-item {
+    padding: .25rem .5rem;
+
+    i + span {
+      margin-left: 0.5em;
+    }
+
+    &.item-done {
+      color: rgb(124, 191, 118);
+    }
+  }
+}
+
 .result {
   .summary {
     margin: auto;

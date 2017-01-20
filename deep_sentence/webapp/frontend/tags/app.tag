@@ -1,6 +1,7 @@
-import route from 'riot-route';
 require('./raw-html.tag');
+require('./checklist-item.tag');
 
+import route from 'riot-route';
 import queryString from 'query-string';
 import axios from 'axios';
 
@@ -33,6 +34,14 @@ import axios from 'axios';
     </div>
   </form>
 
+  <div if={ loading } class="text-center">
+    <ul class="list-group checklist">
+      <checklist-item item-id={ 0 } progress={ progress } text="Fetch articles" />
+      <checklist-item item-id={ 1 } progress={ progress } text="Summarize articles" />
+      <checklist-item item-id={ 2 } progress={ progress } text="Generate title" />
+    </ul>
+  </div>
+
   <div if={ summary } class="summary-result">
     <hr class="separator">
     <div class="result">
@@ -43,6 +52,21 @@ import axios from 'axios';
 
   <script>
     route.base('/');
+
+    const clientId = Math.random().toString(36).substring(7);
+    axios.defaults.headers.common['x-client-id'] = clientId;
+
+    const socket = io.connect();
+    socket.on('connect', () => {
+      socket.emit('subscribe', {room: clientId});
+    });
+
+    this.progress = -1;
+
+    socket.on('progress', message => {
+      this.progress = message.progress;
+      this.update();
+    });
 
     _.assign(this, _.pick(opts, ['summary', 'title', 'error']));
 
@@ -85,10 +109,12 @@ import axios from 'axios';
 
       this.summary = this.error = this.title =  '';
       this.loading = true;
+      this.progress = 0;
       axios.get(`/summary.json?${query}`).then(res => {
         this.update({title: res.data.title, summary: res.data.summary, loading: false});
+        this.progress = 4;
       }).catch(e => {
-        this.update({error: e.response.data.error, loading: false});
+        this.update({error: e.response.data.error, loading: false, progress: -1});
       });
     };
 

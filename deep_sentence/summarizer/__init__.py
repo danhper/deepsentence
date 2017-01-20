@@ -28,14 +28,16 @@ def summarize_text(text, sentences_count=3, language=settings.DEFAULT_LANGUAGE, 
     return sentences if as_list else '\n'.join(sentences)
 
 
-def summarize_texts(texts, sentences_count=3, language=settings.DEFAULT_LANGUAGE):
+def summarize_texts(texts, sentences_count=3, language=settings.DEFAULT_LANGUAGE, progress_callback=lambda _: None):
     options = {'sentences_count': sentences_count, 'language': language, 'as_list': True}
     documents = [summarize_text(text, **options) for text in texts]
+    progress_callback(2)
     if documents and documents[0]:
         title = abstractive_summarizer.compute_title(documents[0][0])
         sentences = deduplicate_sentences(documents)
     else:
         title = 'no sentences could be extracted'
+    progress_callback(3)
     return (title, '\n'.join(sentences))
 
 
@@ -44,6 +46,7 @@ def summarize_url(url, sentences_count=3, language=settings.DEFAULT_LANGUAGE):
     return summarize_text(text, sentences_count=sentences_count, language=language)
 
 
-def summarize_urls(urls, sentences_count=3, language=settings.DEFAULT_LANGUAGE):
+def summarize_urls(urls, sentences_count=3, language=settings.DEFAULT_LANGUAGE, progress_callback=lambda _: None):
     texts = text_extractor.extract_from_urls(urls)
-    return summarize_texts(texts, sentences_count=sentences_count, language=language)
+    progress_callback(1)
+    return summarize_texts(texts, sentences_count=sentences_count, language=language, progress_callback=progress_callback)
