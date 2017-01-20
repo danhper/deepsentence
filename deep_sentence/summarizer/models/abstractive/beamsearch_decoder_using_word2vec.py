@@ -37,7 +37,6 @@ config.params.vocab_size = vocab_size
 logger.info('loading dataset...')
 dataset_content = dataset.str2list(dataset.load_dataset(dataset_path, 1, 100))
 
-logger.info('loading word2vec model...')
 id_vec_dic = id2vector.make_id_vector_dic(w2v.model, id2token, vocab_size)
 
 logger.info('setup graph')

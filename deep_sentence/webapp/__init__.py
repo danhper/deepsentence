@@ -4,6 +4,7 @@ from os import path
 from flask import Flask, render_template, request
 
 from deep_sentence import settings, summarizer
+from deep_sentence.logger import logger
 
 MANIFEST_FILE = path.join(settings.PROJECT_ROOT, 'deep_sentence/webapp/static/manifest.json')
 
@@ -33,6 +34,7 @@ def index():
         try:
             title, summary = summarizer.summarize_urls(urls)
         except BaseException as e:
+            logger.error(e)
             error = str(e)
     return render_template('index.html', title=title, summary=summary, error=error)
 
