@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import argparse
-
 from os import path
 
 from gensim.models import Word2Vec
@@ -9,26 +7,17 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-from models_no_embedding_layer import ABSmodel
-import dataset
-import config
-
 from deep_sentence.logger import logger
 from deep_sentence import settings
 
-import id2vector
+from .models_no_embedding_layer import ABSmodel
+from . import dataset, config, id2vector
 
 MAX_OUTPUT_LENGTH = 15
 BEAM_WIDTH = 3
 INPUT_WEIGHT_BEFORE_SOFTMAX = 0.0
 
 pd.set_option('display.width', 10000)
-
-parser = argparse.ArgumentParser(description='')
-parser.add_argument('--gpu', type=int, default=None)
-parser.add_argument('--dataset_path', type=str)
-parser.add_argument('--model_path', type=str)
-args = parser.parse_args()
 
 # model_path = '../result_using_word2vec/models/epoch3-batch5000/model.ckpt'
 # model_path = '../result_using_word2vec/models/epoch7-batch10000/model.ckpt'
@@ -53,10 +42,10 @@ w2v_model = Word2Vec.load_word2vec_format(w2v_path, binary=True)
 id_vec_dic = id2vector.make_id_vector_dic(w2v_model, id2token, vocab_size)
 del w2v_model
 
-logger.info('setput graph')
+logger.info('setup graph')
 sess = tf.Session()
-if args.gpu:
-    with tf.device('/gpu:%d'%args.gpu):
+if settings.GPU_NUMBER is not None:
+    with tf.device('/gpu:%d' % settings.GPU_NUMBER):
         model = ABSmodel(config.params)
         model.rebuild_forward_graph(sess, model_path)
 else:
@@ -73,6 +62,7 @@ def compute_title_from_row(row):
 
     logger.debug('x words: %s', x_words)
     logger.debug('t words: %s', t_words)
+    logger.debug('---------------------------------')
 
     return compute_title(x)
 
@@ -94,7 +84,6 @@ def compute_title(raw_x):
     x_weight = np.zeros(vocab_size)
     x_weight[x] = INPUT_WEIGHT_BEFORE_SOFTMAX
 
-    logger.debug('---------------------------------')
     for i in range(MAX_OUTPUT_LENGTH):
         temp_output = np.array([])
         temp_output_prob = np.array([])

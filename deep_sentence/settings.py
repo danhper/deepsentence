@@ -35,3 +35,5 @@ FIXTURES_PATH = path.join(PROJECT_ROOT, 'deep_sentence', 'fixtures')
 WORD_EMBEDDINGS_URL = 'http://www.cl.ecei.tohoku.ac.jp/~m-suzuki/jawiki_vector/entity_vector.tar.bz2'
 
 MODELS_PATH = os.environ.get('MODELS_PATH', path.join(PROJECT_ROOT, 'models'))
+
+GPU_NUMBER = None
