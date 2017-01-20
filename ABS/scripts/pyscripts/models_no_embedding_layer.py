@@ -238,7 +238,7 @@ class ABS_plus_model(ABSmodel):
     def build_train_graph_for_alpha(self, sess, model_path):
         batch_size = self.params.batch_size
         vocab_size = self.params.vocab_size
-        self.alpha = tf.Variable(tf.zeros([5]), dtype=tf.float32, name='alpha')
+        self.alpha = tf.Variable(tf.ones([5]), dtype=tf.float32, name='alpha')
         
         self.features = tf.placeholder(tf.float32, shape=[batch_size, vocab_size, 4]) 
 

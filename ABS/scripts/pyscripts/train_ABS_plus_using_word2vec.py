@@ -27,7 +27,8 @@ parser.add_argument('--dictionary_path', type=str)
 parser.add_argument('--save_dir', type=str)
 args = parser.parse_args()
 
-model_path = '../result_using_word2vec/models/epoch7-batch10000/model.ckpt'
+#model_path = '../result_using_word2vec/models/epoch7-batch10000/model.ckpt'
+model_path = '../result_using_word2vec/models/epoch15-batch10000/model.ckpt'
 
 ### dictionaryのload ###
 token2id = dataset.load_dictionary(args.dictionary_path)
@@ -56,14 +57,40 @@ else:
     model = ABS_plus_model(config.params)
     model.build_train_graph_for_alpha(sess, model_path)
 
-sess.run(tf.variables_initializer([model.alpha]))
+# sess.run(tf.variables_initializer([model.alpha]))
+sess.run(tf.initialize_variables([model.alpha]))
+# sess.run(tf.variables_initializer())
 # sess.run(tf.initialize_all_variables([model.alpha])) # for lower tf version
 
 alpha_ph = tf.placeholder(tf.float32, shape=[5])
 sess.run(model.alpha.assign(alpha_ph),
          feed_dict={alpha_ph: np.array([1, 0.1, 0.1, 0.1, 0.1]).astype(np.float32)})
 
-save_vals = {'alpha': model.alpha}
+# 取り急ぎ
+uninitialized_vars = []
+for var in tf.all_variables():
+    try:
+        sess.run(var)
+    except tf.errors.FailedPreconditionError:
+        print(var)
+        uninitialized_vars.append(var)
+sess.run(tf.initialize_variables(uninitialized_vars))
+
+save_vals = {'alpha': model.alpha,
+             'E_w': model.E_w,
+             'E_b': model.E_b,
+             'F_w': model.F_w,
+             'F_b': model.F_b,
+             'G_w': model.G_w,
+             'G_b': model.G_b,
+             'U_w': model.U_w,
+             'U_b': model.U_b,
+             'V_w': model.V_w,
+             'V_b': model.V_b,
+             'W_w': model.W_w,
+             'W_b': model.W_b,
+             'P': model.P}
+
 saver = tf.train.Saver(save_vals)
 
 log_dir = args.save_dir+'/log'
@@ -102,7 +129,6 @@ for i in range(config.params.epoch):
             
             with open(log_path, 'a') as f_log:
                 f_log.write('%d,%d,%f\n'%(i+1, j+1, accuracy))
-
     print()
     feed_dict={model.x: x, model.y_c: y_c, model.features: features, model.t: t_onehot}
     accuracy = model.accuracy.eval(session=sess, feed_dict=feed_dict)

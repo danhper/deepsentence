@@ -44,6 +44,7 @@ export CUDA_VISIBLE_DEVICES='1'
 # 	   --save_dir ${MODEL_DIR}
 
 MODEL_PLUS_DIR='../result_plus_using_word2vec/models'
+mkdir -p ${MODEL_PLUS_DIR}
 python pyscripts/train_ABS_plus_using_word2vec.py \
 	   --batch_path ${DATASET_DIR}/batch.pkl \
 	   --w2v_path ${W2V_PATH} \

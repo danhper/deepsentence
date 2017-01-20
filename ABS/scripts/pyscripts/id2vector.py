@@ -106,7 +106,6 @@ def convert_batch_plus_feature(batch, id_vec_dic, token2id):
         #    print('-------------------------------------------')
 
     features = np.array(features).astype(np.float32)
-    print(features.shape)
     
     return {'x': vector_x, 'y_c': vector_y_c, 't_onehot': t_onehot, 'features': features}
     
