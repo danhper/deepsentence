@@ -25,8 +25,13 @@ def split_train_test(data):
 
 def tokenize(sentence):
     mt    = MeCab.Tagger('-Owakati')
-    parse = mt.parse(sentence)
-    return parse.split()
+    tokens = []
+    node = mt.parseToNode(sentence)
+    while node:
+        if node.surface:
+            tokens.append(node.surface)
+        node = node.next
+    return tokens
 
 def tokenize_title(title, window_size):
     token = tokenize(title)
