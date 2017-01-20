@@ -10,6 +10,7 @@ import functools
 from multiprocessing import Pool
 
 import MeCab
+import tinysegmenter
 import gensim
 import numpy as np
 import pandas as pd
@@ -24,14 +25,14 @@ def split_train_test(data):
     return train, test
 
 def tokenize(sentence):
-    mt    = MeCab.Tagger('-Owakati')
-    tokens = []
-    node = mt.parseToNode(sentence)
-    while node:
-        if node.surface:
-            tokens.append(node.surface)
-        node = node.next
-    return tokens
+    # XXX: on Debian wheezy: An error occured: 'utf-8' codec can't decode bytes in position 0-1: invalid continuation byte
+    try:
+        mt    = MeCab.Tagger('-Owakati')
+        parse = mt.parse(sentence)
+        return parse.split()
+    except UnicodeDecodeError:
+        tokenizer = tinysegmenter.TinySegmenter()
+        return tokenizer.tokenize(sentence)
 
 def tokenize_title(title, window_size):
     token = tokenize(title)
