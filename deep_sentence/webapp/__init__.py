@@ -1,7 +1,7 @@
 import json
 from os import path
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
 from deep_sentence import settings, summarizer
 from deep_sentence.logger import logger
@@ -27,16 +27,19 @@ if path.isfile(settings.GOOGLE_API_CREDENTIALS):
 
 @app.route('/')
 def index():
-    title, summary, error = '', '', None
+    return render_template('index.html')
+
+
+@app.route('/summary.json')
+def get_summary():
     urls = request.args.getlist('urls[]')
-    if urls:
-        app.logger.info(urls)
-        try:
-            title, summary = summarizer.summarize_urls(urls)
-        except BaseException as e:
-            logger.exception(e)
-            error = str(e)
-    return render_template('index.html', title=title, summary=summary, error=error)
+    title, summary, error = summarize_urls(urls)
+    if error:
+        resp = jsonify({'error': error})
+        resp.status_code = 500
+        return resp
+    else:
+        return jsonify({'title': title, 'summary': summary})
 
 
 @app.route('/about')
@@ -58,3 +61,17 @@ def japanese_html(text):
         return text
     result = parser.parse(text, 'wordwrap')
     return result['html_code']
+
+
+def summarize_urls(urls):
+    if not urls:
+        return '', '', ''
+
+    logger.info(urls)
+
+    try:
+        title, summary = summarizer.summarize_urls(urls)
+        return title, summary, ''
+    except BaseException as e:
+        logger.exception(e)
+        return '', '', str(e)

@@ -1,40 +1,5 @@
 {% extends "application.html" %}
 
 {% block content %}
-<h1 class="text-center">Deep Sentence</h1>
-
-{% if error %}
-  <div class="row text-center">
-    <div class="col-sm-12 text-center">
-      <div class="alert alert-danger alert-dismissible alert-auto" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        An error occured: {{ error }}
-      </div>
-    </div>
-  </div>
-{% endif %}
-
-<p>Enter the URLs you want to summarize</p>
-<form>
-  <div class="urls">
-    <url-inputs></url-inputs>
-  </div>
-
-  <div class="form-group row">
-    <div class="col-sm-12 text-center">
-      <button type="submit" class="btn btn-primary">
-        <i class="fa fa-list"></i>
-        Summarize
-      </button>
-    </div>
-  </div>
-</form>
-
-{% if summary %}
-  <hr class="separator">
-  <div class="result">
-    <h2 class="text-center">{{ title }}</h2>
-    <p class="summary">{{ summary | japanese_html | safe }}</p>
-  </div>
-{% endif %}
+  <app />
 {% endblock %}

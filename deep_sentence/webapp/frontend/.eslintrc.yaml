@@ -7,3 +7,4 @@ parserOptions:
 globals:
   $: true
   riot: true
+  _: true

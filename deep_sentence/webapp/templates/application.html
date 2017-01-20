@@ -19,10 +19,11 @@
     {% block content %}{% endblock %}
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.0.7/riot.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.0.7/riot.js"></script>
   <script src="{{ url_for('static', filename='app.js'|asset_filename) }}"></script>
 </body>
 </html>

@@ -26,13 +26,18 @@ def deploy():
         run("python2 setup.py install --user")
         run("scrapyd-deploy")
 
-        if files.exists('tmp/webapp.pid'):
-            run("kill -HUP $(cat tmp/webapp.pid)")
 
         run("make webapp_setup")
+    restart_server()
 
 
 def download_models():
     with cd(CODE_DIR):
         with shell_env(PROJECT_ROOT=CODE_DIR):
             run("make download_models")
+
+
+def restart_server():
+    with cd(CODE_DIR):
+        if files.exists('tmp/webapp.pid'):
+            run("kill -HUP $(cat tmp/webapp.pid)")
