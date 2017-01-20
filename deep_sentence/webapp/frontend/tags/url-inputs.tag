@@ -7,8 +7,8 @@ require('./url-input.tag');
     onadd={ parent.addURL }
     onremove={ parent.removeURL }
     index={ i + 1 }
-    first={ i === 0 }
-    last={ i === parent.opts.urls.length - 1 } />
+    show-delete={ i !== 0 }
+    show-add-url={ i === parent.opts.urls.length - 1 && i < 2 } />
 
   <script>
     this.addURL = () => {

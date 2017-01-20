@@ -2,7 +2,7 @@
   <div class="row form-group url-input-group form-baseline">
     <label class="col-4 col-md-2 form-control-label text-right">
       <button
-        if={ !opts.first }
+        if={ opts.showDelete }
         onclick={ opts.onremove }
         type="button"
         class="remove-url btn btn-outline-danger btn-sm"
@@ -25,7 +25,7 @@
 
     <div class="col-4 col-md-2 add-url-group">
       <button
-        if={ opts.last }
+        if={ opts.showAddUrl }
         onclick={ opts.onadd }
         type="button"
         class="btn btn-secondary add-url btn-sm"
