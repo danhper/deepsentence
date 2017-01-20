@@ -8,6 +8,7 @@ from sumy.summarizers.lex_rank import LexRankSummarizer as Summarizer
 from sumy.utils import get_stop_words
 
 from deep_sentence import settings
+from deep_sentence.summarizer.models import abstractive as abstractive_summarizer
 
 from . import text_extractor
 
@@ -16,7 +17,6 @@ try:
     unicode
 except NameError:
     unicode = str
-
 
 def summarize_text(text, sentences_count=3, language=settings.DEFAULT_LANGUAGE, as_list=False):
     parser = PlaintextParser.from_string(text, Tokenizer(language))
@@ -31,7 +31,12 @@ def summarize_texts(texts, sentences_count=3, language=settings.DEFAULT_LANGUAGE
     options = {'sentences_count': sentences_count, 'language': language, 'as_list': True}
     sentences = [sentence for text in texts for sentence in summarize_text(text, **options)]
     # TODO: deduplicate redundant sentences
-    return '\n'.join(sentences)
+
+    if sentences:
+        title = abstractive_summarizer.compute_title(sentences[0])
+    else:
+        title = 'no sentences could be extracted'
+    return (title, '\n'.join(sentences))
 
 
 def summarize_url(url, sentences_count=3, language=settings.DEFAULT_LANGUAGE):

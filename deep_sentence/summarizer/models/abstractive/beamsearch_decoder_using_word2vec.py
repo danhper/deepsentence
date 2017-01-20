@@ -15,13 +15,13 @@ from . import dataset, config, id2vector
 
 MAX_OUTPUT_LENGTH = 15
 BEAM_WIDTH = 3
-INPUT_WEIGHT_BEFORE_SOFTMAX = 0.0
+INPUT_WEIGHT_BEFORE_SOFTMAX = 0.5
 
 pd.set_option('display.width', 10000)
 
 # model_path = '../result_using_word2vec/models/epoch3-batch5000/model.ckpt'
 # model_path = '../result_using_word2vec/models/epoch7-batch10000/model.ckpt'
-model_path = path.join(settings.MODELS_PATH, 'abstractive/trained/epoch15-batch10000/model.ckpt')
+model_path = path.join(settings.MODELS_PATH, 'abstractive/trained/model.ckpt')
 
 dataset_path = path.join(settings.MODELS_PATH, 'abstractive/data/train_head.csv')
 w2v_path = path.join(settings.MODELS_PATH, 'entity_vector/entity_vector.model.bin')
@@ -71,7 +71,7 @@ def transform_input(x):
     if isinstance(x, list) or isinstance(x, np.ndarray):
         return x
     tokens = dataset.tokenize(x)
-    return [token2id[token] for token in tokens]
+    return [token2id.get(token, token2id['<UNK>']) for token in tokens]
 
 def compute_title(raw_x):
     x = transform_input(raw_x)
@@ -113,7 +113,7 @@ def compute_title(raw_x):
         output_prob = temp_output_prob[choice]
 
     best_output = output[0]
-    o_words = ' '.join(extract_title(best_output))
+    o_words = ''.join(extract_title(best_output))
     return o_words
 
 
