@@ -4,24 +4,39 @@ import pandas as pd
 import MeCab
 from deep_sentence.summarizer.utils import w2v
 
+import tinysegmenter
+
 WORD_CLASS = ['名詞', '動詞', '形容詞', '形容動詞', '副詞']
 
 
+def tiny_tokenize(sentence):
+    tokenizer = tinysegmenter.TinySegmenter()
+    return tokenizer.tokenize(sentence)
+
+
 def tokenize_POSfilter(sentence):
-    tagger = MeCab.Tagger('-Ochasen')
-    tagger.parse('')
-    node = tagger.parseToNode(sentence)
-    filtered = []
-    while node:
-        if str(node.feature.split(',')[0]) in WORD_CLASS:
-            filtered.append(node.surface)
-        node = node.next
-    return filtered
+    try:
+        tagger = MeCab.Tagger('-Ochasen')
+        tagger.parse('')
+        node = tagger.parseToNode(sentence)
+        filtered = []
+        while node:
+            if str(node.feature.split(',')[0]) in WORD_CLASS:
+                filtered.append(node.surface)
+            node = node.next
+        return filtered
+    except UnicodeError:
+        return tiny_tokenize(sentence)
+
 
 def tokenize(sentence):
-    mt    = MeCab.Tagger('-Owakati')
-    parse = mt.parse(sentence)
-    return parse.split()
+    try:
+        mt    = MeCab.Tagger('-Owakati')
+        parse = mt.parse(sentence)
+        return parse.split()
+    except UnicodeDecodeError:
+        return tiny_tokenize(sentence)
+
 
 def word_similarity(word1, word2):
     try:
