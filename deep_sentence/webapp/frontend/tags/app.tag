@@ -42,7 +42,7 @@ import axios from 'axios';
     </ul>
   </div>
 
-  <div if={ summary } class="summary-result">
+  <div if={ title } class="summary-result">
     <hr class="separator">
     <div class="result">
       <h2 class="text-center">{ title }</h2>
