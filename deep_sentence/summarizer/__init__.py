@@ -37,6 +37,7 @@ def summarize_texts(texts, sentences_count=3, language=settings.DEFAULT_LANGUAGE
         sentences = deduplicate_sentences(documents)
     else:
         title = 'no sentences could be extracted'
+        sentences = []
     progress_callback(3)
     return (title, '\n'.join(sentences))
 
