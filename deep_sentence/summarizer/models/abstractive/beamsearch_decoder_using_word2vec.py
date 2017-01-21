@@ -23,7 +23,7 @@ pd.set_option('display.width', 10000)
 # model_path = '../result_using_word2vec/models/epoch7-batch10000/model.ckpt'
 model_path = path.join(settings.MODELS_PATH, 'abstractive/trained/epoch15-batch10000/model.ckpt')
 
-dataset_path = path.join(settings.MODELS_PATH, 'abstractive/data/train_head.csv')
+dataset_path = path.join(settings.MODELS_PATH, 'abstractive/data/train.csv')
 w2v_path = path.join(settings.MODELS_PATH, 'entity_vector/entity_vector.model.bin')
 
 dictionary_path = path.join(settings.MODELS_PATH, 'abstractive/data/dictionary.pkl')

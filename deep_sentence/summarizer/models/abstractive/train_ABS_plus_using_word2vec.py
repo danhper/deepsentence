@@ -115,18 +115,21 @@ for i in range(config.params.epoch):
         t_onehot = batch['t_onehot']
         features = batch['features']
         model.train(sess, x, y_c, features, t_onehot)
-        if (j+1) % 5000 == 0: 
+        if (j+1) % 10 == 0:  ###################################"#####3
             print()
             feed_dict={model.x: x, model.y_c: y_c, model.features: features, model.t: t_onehot}
             accuracy = model.accuracy.eval(session=sess, feed_dict=feed_dict)
             print('  accuracy: %f'%accuracy)
+
+            alpha = model.alpha.eval(session=sess, feed_dict=feed_dict)
+            print('  alpha:', alpha)
             
-            save_dir = args.save_dir+'/epoch%d-batch%d'%(i+1, j+1)
-            if not os.path.exists(save_dir):
-                os.makedirs(save_dir)
-            save_path = saver.save(sess, save_dir+'/model.ckpt')
-            print('  Model saved in file: %s' % save_path)
-            
+            # save_dir = args.save_dir+'/epoch%d-batch%d'%(i+1, j+1)
+            # if not os.path.exists(save_dir):
+            #     os.makedirs(save_dir)
+            # save_path = saver.save(sess, save_dir+'/model.ckpt')
+            # print('  Model saved in file: %s' % save_path)
+
             with open(log_path, 'a') as f_log:
                 f_log.write('%d,%d,%f\n'%(i+1, j+1, accuracy))
     print()

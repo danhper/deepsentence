@@ -133,7 +133,7 @@ class ABSmodel(NNLMmodel):
         self.train_step.run(session=session, feed_dict=feed_dict)
 
     
-    def rebuild_graph(self, sess, model_path, forward=True, var_list=None):
+    def rebuild_graph(self, sess, model_path, input_weight=True, var_list=None, alpha=False):
 
         batch_size = self.params.batch_size
         window_size = self.params.window_size
@@ -177,6 +177,8 @@ class ABSmodel(NNLMmodel):
                         'W_w': self.W_w,
                         'W_b': self.W_b,
                         'P': self.P}
+        if alpha:
+            restore_vals['alpha'] = self.alpha
         
         saver = tf.train.Saver(restore_vals)
         saver.restore(sess, model_path)
@@ -219,7 +221,7 @@ class ABSmodel(NNLMmodel):
         
         self.prob_from_enc = tf.matmul(self.enc, self.W_w) + self.W_b
 
-        if forward:
+        if input_weight:
             self.x_weight = tf.placeholder(tf.float32, shape=[vocab_size])
             self.prob = tf.nn.softmax(self.prob_from_h + self.prob_from_enc + self.x_weight)
         else:
@@ -234,7 +236,7 @@ class ABSmodel(NNLMmodel):
         return session.run(self.prob, feed_dict=feed_dict)
 
 class ABS_plus_model(ABSmodel):
-
+    
     def build_train_graph_for_alpha(self, sess, model_path):
         batch_size = self.params.batch_size
         vocab_size = self.params.vocab_size
@@ -242,7 +244,7 @@ class ABS_plus_model(ABSmodel):
         
         self.features = tf.placeholder(tf.float32, shape=[batch_size, vocab_size, 4]) 
 
-        self.rebuild_graph(sess, model_path, forward=False, var_list=[self.alpha])
+        self.rebuild_graph(sess, model_path, input_weight=False, var_list=[self.alpha])
 
         self.f = tf.concat(2, [tf.expand_dims(self.prob, 2), self.features]) #(batch_size, vocab_size, 5)
         
@@ -261,6 +263,26 @@ class ABS_plus_model(ABSmodel):
     def train(self, session, x, y_c, features, t):
         feed_dict = {self.x: x, self.y_c: y_c, self.features: features, self.t: t}
         self.train_step.run(session=session, feed_dict=feed_dict)
+
+    def rebuild_forward_graph(self, sess, model_path):
+        self.params.batch_size = 1
+        batch_size = self.params.batch_size
+        vocab_size = self.params.vocab_size
+        self.alpha = tf.Variable(tf.ones([5]), dtype=tf.float32, name='alpha')
+        self.features = tf.placeholder(tf.float32, shape=[batch_size, vocab_size, 4])
+        
+        self.rebuild_graph(sess, model_path, input_weight=False, alpha=True)
+
+        self.f = tf.concat(2, [tf.expand_dims(self.prob, 2), self.features]) #(batch_size, vocab_size, 5)
+        
+        initializer = tf.zeros([1, vocab_size])
+        self.prob_plus = tf.nn.softmax(tf.reshape(tf.scan(lambda a, x: tf.matmul(tf.expand_dims(self.alpha, 0), x),
+                                                          elems=tf.transpose(self.f, [0, 2, 1]),
+                                                          initializer=initializer), [batch_size, -1]))
+        
+    def decode(self, session, x, y_c, x_weight, features):
+        feed_dict = {self.x: x, self.y_c: y_c, self.features: features}
+        return session.run(self.prob_plus, feed_dict=feed_dict)
         
 if __name__ == '__main__':
 
