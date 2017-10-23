@@ -25,7 +25,7 @@ def tokenize_POSfilter(sentence):
                 filtered.append(node.surface)
             node = node.next
         return filtered
-    except UnicodeError:
+    except RuntimeError:
         return tiny_tokenize(sentence)
 
 

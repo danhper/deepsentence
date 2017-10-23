@@ -30,7 +30,7 @@ def tokenize(sentence):
         mt    = MeCab.Tagger('-Owakati')
         parse = mt.parse(sentence)
         return parse.split()
-    except UnicodeDecodeError:
+    except RuntimeError:
         tokenizer = tinysegmenter.TinySegmenter()
         return tokenizer.tokenize(sentence)
 
